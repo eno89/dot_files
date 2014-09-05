@@ -84,41 +84,41 @@ scriptencoding utf-8
 
 " プラグインの読み込み
 if !executable("git")
-	echo "Please install git." . " Reboot Vim."
-	finish
+    echo "Please install git." . " Reboot Vim."
+    finish
 endif
 
 let s:neobundle_plugins_dir =  '~/.vim/bundle'
 " 一度だけ読まれる設定
 if has('vim_starting')
-	" neobundle.vim がインストールするプラグインへのパス
-	" neobundle.vim もこのディレクトリにインストールが行われる
-	" neobundle.vim を runtimepath に加える
-"	execute "set runtimepath+=" . s:neobundle_plugins_dir . "/neobundle.vim"
+    " neobundle.vim がインストールするプラグインへのパス
+    " neobundle.vim もこのディレクトリにインストールが行われる
+    " neobundle.vim を runtimepath に加える
+    "	execute "set runtimepath+=" . s:neobundle_plugins_dir . "/neobundle.vim"
 endif
 
-" NeoBundle が存在するか " 上手く動かない
-"if !isdirectory(s:neobundle_plugins_dir . "/neobundle.vim")
-"	echo "Please install neobundle.vim."
-"	" NeoBundle のインストール
-"	function! s:install_neobundle()
-"	if input("Install neobundle.vim? [Y/N] : ") =="Y"
-"		if !isdirectory(s:neobundle_plugins_dir)
-"		:all mkdir(s:neobundle_plugins_dir, "p")
-"	endif
-"	execute "!git clone git://github.com/Shougo/neobundle.vim "
-"				\ . s:neobundle_plugins_dir . "/neobundle.vim"
-"	echo "neobundle installed. Please restart vim."
-"	else
-"	echo "Canceled."
-"	endif
-"	endfunction
-"	augroup install-neobundle
-"	autocmd!
-"	autocmd VimEnter * call s:install_neobundle()
-	augroup END
-"	finish
-"endif
+" NeoBundle が存在するか
+if (isdirectory(s:neobundle_plugins_dir . "/neobundle.vim") ) == 1
+    "echo "Please install neobundle.vim."
+    " NeoBundle のインストール
+    function! s:install_neobundle()
+        if input("Install neobundle.vim? [Y/N] : ") == "Y"
+            if isdirectory(s:neobundle_plugins_dir) == 1
+                :all mkdir(s:neobundle_plugins_dir, "p")
+            endif
+            execute "!git clone git://github.com/Shougo/neobundle.vim "
+                        \ . s:neobundle_plugins_dir . "/neobundle.vim"
+            echo "neobundle installed. Please restart vim."
+        else
+            echo "Canceled."
+        endif
+    endfunction
+    augroup install-neobundle
+        autocmd!
+        autocmd VimEnter * call s:install_neobundle()
+    augroup END
+    finish
+endif
 
 
 " Mapping
@@ -128,7 +128,6 @@ vmap     <Space> [prefix]
 nnoremap [prefix] <Nop>
 nmap     <Space> [prefix]
 
-
 execute "set runtimepath+=" . s:neobundle_plugins_dir . "/neobundle.vim"
 " NeoBundle の初期化
 call neobundle#begin(s:neobundle_plugins_dir)
@@ -136,9 +135,10 @@ call neobundle#begin(s:neobundle_plugins_dir)
 NeoBundleFetch 'Shougo/neobundle.vim'
 " Use neobundle standard recipes.
 "NeoBundle 'Shougo/neobundle-vim-recipes'
-" My Bundles here:
-
-"AddNeoBundle  mneobundle
+"
+"-----------------------------
+"
+"AddNeoBundle
 "日本語ヘルプ
 NeoBundle 'vim-jp/vimdoc-ja'
 "かぶるけど追加
@@ -147,12 +147,17 @@ NeoBundle 'vim-jp/vimdoc-ja'
 "" Alignを日本語環境で使用するための設定
 " 時間がかかる
 " let g:Align_xstrlen=3
+"テキスト整形
+NeoBundle 'h1mesuke/vim-alignta'
+
+" Align -r .=  " +=,= などが混ざってる場合
+
+"
+NeoBundle 'vim-jp/vital.vim'
 
 "Vimの便利な画面分割＆タブページと、それを更に便利にする方法
 "http://qiita.com/tekkoc/items/98adcadfa4bdc8b5a6ca
 NeoBundle 'kana/vim-submode'
-"テキスト整形
-NeoBundle 'h1mesuke/vim-alignta'
 
 " http://d.hatena.ne.jp/itchyny/20120609/1339249777
 "NeoBundle 'Lokaltog/vim-powerline'
@@ -181,28 +186,41 @@ NeoBundle 'fuenor/im_control.vim'
 " NeoBundle 'surround.vim'
 NeoBundle 'tpope/vim-speeddating'
 
+" 新型スカウターを開発した
+" http://d.hatena.ne.jp/thinca/20091031/1257001194
+" http://vim-jp.org/vim-users-jp/2009/07/10/Hack-39.html
+NeoBundle 'thinca/vim-scouter'
+
+
+NeoBundle 'glidenote/memolist.vim'
+"let g:memolist_path = "
+"
+"NeoBundleLazy 'kannokanno/previm' , { 'autoload' : { 'filetypes' : 'markdown' } }
+NeoBundle 'kannokanno/previm'
+
+
+"augroup PrevimSettings
+"  autocmd!
+"  autocmd BufNewFile,BufRead *.{md,mdwn,mkd,mkdn,mark*} set filetype=markdown
+"augroup END
 "カーソル行のURLをブラウザで開く {{{
 "htp://d.hatena.ne.jp/shunsuk/20110508/1304865150
 "URIを開くプラグイン
 NeoBundle 'tyru/open-browser.vim'
 function! s:HandleURI()
-  let uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;:]*')
-  echo uri
-  if uri != ""
-    "exec "!open \"" . uri . "\""
-    exec "OpenBrowser \"" . uri . "\""
-  else
-    echo "No URI found in line."
-  endif
+    let uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;:]*')
+    echo uri
+    if uri != ""
+        "exec "!open \"" . uri . "\""
+        exec "OpenBrowser \"" . uri . "\""
+    else
+        echo "No URI found in line."
+    endif
 endfunction
 nnoremap <Leader>w :<C-u>call <SID>HandleURI()<CR>
 "カーソルの下にURLがあればそれを開いてURLがなければ下にある単語を検索エンジンで検索します。
 nmap <Leader>w <Plug>(openbrowser-smart-search)
 
-" 新型スカウターを開発した
-" http://d.hatena.ne.jp/thinca/20091031/1257001194
-" http://vim-jp.org/vim-users-jp/2009/07/10/Hack-39.html
-NeoBundle 'thinca/vim-scouter'
 "
 NeoBundle "Shougo/vimproc"
 " 汎用的なコード補完プラグイン
@@ -232,10 +250,9 @@ NeoBundle "tyru/caw.vim"
 
 
 augroup UniteN3337
-autocmd!
-"autocmd FileType cpp nnoremap <buffer><Space><Space>n
-autocmd FileType cpp nnoremap <buffer><Space><Space>n
-						\ :<C-u>Unite -auto-preview n3337<CR>
+    autocmd!
+    autocmd FileType cpp nnoremap <buffer><Space><Space>n
+                \ :<C-u>Unite -auto-preview n3337<CR>
 augroup END
 
 " unite
@@ -307,6 +324,9 @@ NeoBundle 'vim-scripts/cursoroverdictionary'
 
 NeoBundle 'vim-jp/vim-sweep_trail'
 
+
+" NeoBundle 'vim-scripts/project.vim'
+
 "------------------------------------
 " eskk.vim
 "------------------------------------
@@ -314,7 +334,8 @@ NeoBundle 'vim-jp/vim-sweep_trail'
 " http://d.hatena.ne.jp/alwei/20111029/1319905783
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'tyru/skkdict.vim'
-set imdisable
+" ime を無効化
+"set imdisable
 let $ESKK_DIR = expand("$HOME/.vim/eskk/")
 let $ESKK_USER_DICT = $ESKK_DIR ."eskk_jisyo"
 " "{{{
@@ -327,10 +348,10 @@ let g:eskk#dictionary = { 'path': $ESKK_USER_DICT , 'sorted': 0, 'encoding': 'ut
 let g:eskk#large_dictionary = { 'path': $ESKK_DIR . "dict/SKK-JISYO.L" , 'sorted': 1, 'encoding': 'euc-jp' }
 let g:eskk#server = { 	'host': 'localhost', 'port': 55100,	'type': 'notfound' }
 let g:eskk#cursor_color = {   'ascii': ['#8b8b83', '#bebebe'],
-						  \   'hira': ['#8b3e2f', '#ffc0cb'],
-						  \   'kata': ['#228b22', '#00ff00'],
-						  \   'abbrev': '#4169e1',
-						  \   'zenei': '#ffd700'}
+            \   'hira': ['#8b3e2f', '#ffc0cb'],
+            \   'kata': ['#228b22', '#00ff00'],
+            \   'abbrev': '#4169e1',
+            \   'zenei': '#ffd700'}
 " <C-g>u  で元 にもどす?
 let g:eskk#set_undo_point = { 'sticky': 1,	'kakutei': 1 }
 imap <C-j> <Plug>(eskk:toggle)
@@ -353,18 +374,18 @@ NeoBundleCheck
 " プラグインの設定前に呼ばれる関数
 " プラグインを無効にしたい場合など時に使用する
 function! CppVimrcPrePlugin()
-	" プラグインを無効にする場合
-" 	NeoBundleDisable neocomplete.vim
+    " プラグインを無効にする場合
+    " 	NeoBundleDisable neocomplete.vim
 endfunction
 
 " 一番最後に呼ばれる関数
 " 設定などを上書きしたい場合に使用する
 function! CppVimrcOnFinish()
-	" ??
-	if !exists('g:quickrun_config')
-		let g:quickrun_config = {}
-	endif
-	let g:quickrun_config.runner = "wandbox"
+    " ??
+    if !exists('g:quickrun_config')
+        let g:quickrun_config = {}
+    endif
+    let g:quickrun_config.runner = "wandbox"
 endfunction
 
 "let g:neocomplete#force_overwrite_completefunc=1
@@ -373,9 +394,9 @@ if !exists('g:neocomplete#force_omni_input_patterns')
 endif
 let g:neocomplete#force_overwrite_completefunc = 1
 let g:neocomplete#force_omni_input_patterns.c =
-	  \ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
 let g:neocomplete#force_omni_input_patterns.cpp =
-	  \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 let g:clang_use_library = 1
@@ -384,10 +405,10 @@ let g:clang_use_library = 1
 " neocomplet.vim
 let s:hooks = neobundle#get_hooks("neocomplete.vim")
 function! s:hooks.on_source(bundle)
-	" 補完を有効にする
-	let g:neocomplete#enable_at_startup = 1
-	" 補完に時間がかかってもスキップしない
-	let g:neocomplete#skip_auto_completion_time = ""
+    " 補完を有効にする
+    let g:neocomplete#enable_at_startup = 1
+    " 補完に時間がかかってもスキップしない
+    let g:neocomplete#skip_auto_completion_time = ""
 endfunction
 unlet s:hooks
 
@@ -399,29 +420,7 @@ unlet s:hooks
 
 "}}}
 
-"-------------------------------------------------------------------------------
 "
-"-------------------------------------------------------------------------------
-" Plugin {{{
-" C++ 関連の補完などの設定，vimrc.osyo-manga を読み込む {{{
-
-" プラグインの設定前に呼ばれる関数
-" プラグインを無効にしたい場合など時に使用する
-function! CppVimrcPrePlugin()
-	" プラグインを無効にする場合
-" 	NeoBundleDisable neocomplete.vim
-endfunction
-
-" 一番最後に呼ばれる関数
-" 設定などを上書きしたい場合に使用する
-function! CppVimrcOnFinish()
-	" ??
-	if !exists('g:quickrun_config')
-		let g:quickrun_config = {}
-	endif
-	let g:quickrun_config.runner = "wandbox"
-endfunction
-
 " vimrc の読み込み
 "source <sfile>:h/vimrc
 " シンボリックリンクしてあってずれるかもしれないので，パスにしておく
@@ -431,16 +430,16 @@ endfunction
 
 "-------------------------------------------------------------------------------
 if exists("*CppVimrcOnPrePlugin")
-	call CppVimrcOnPrePlugin()
+    call CppVimrcOnPrePlugin()
 endif
 "
 if !has('vim_starting')
-  " Call on_source hook when reloading .vimrc.
-  call neobundle#call_hook('on_source')
+    " Call on_source hook when reloading .vimrc.
+    call neobundle#call_hook('on_source')
 endif
 "
 if exists("*CppVimrcOnFinish")
-	call CppVimrcOnFinish()
+    call CppVimrcOnFinish()
 endif
 " }}}
 
@@ -509,8 +508,6 @@ nnoremap [prefix].r :<C-u>w<CR>:source %<CR>
 " .vimrc の読み込み
 " http://whileimautomaton.net/2008/08/vimworkshop3-kana-presentation
 command! ReloadVimrc  source $MYVIMRC
-" 終了
-nnoremap [prefix].q :<C-u>q!<CR>
 "Vimの極め方
 "http://whileimautomaton.net/2008/08/vimworkshop3-kana-presentation
 " normal モードでは ; : を切り替える．インサートモードではそのまま使える．
@@ -520,6 +517,7 @@ nnoremap [prefix].q :<C-u>q!<CR>
 " Shift を押す代わりに
 nnoremap [prefix];  :<C-u>
 "
+" Unite関連
 " vimでキーマッピングする際に考えたほうがいいこと
 " http://deris.hatenablog.jp/entry/2013/05/02/192415
 nnoremap [unite]    <Nop>
@@ -532,6 +530,8 @@ nnoremap <silent> [unite]u   :<C-u>Unite buffer file_mru bookmark file<CR>
 nnoremap <silent> [unite]c   :<C-u>UniteWithCurrentDir -buffer-name=files file_mru bookmark file<CR>
 nnoremap <silent> [unite]b   :<C-u>Unite buffer<CR>
 nnoremap <silent> [unite]f   :<C-u>Unite file<CR>
+nnoremap <silent> [unite]t   :<C-u>Unite tag<CR>
+nnoremap <silent> [unite]o   :<C-u>Unite outline<CR>
 " Unite関連
 nnoremap [prefix]sT :<C-u>Unite tab<CR>
 nnoremap [prefix]sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
@@ -580,7 +580,7 @@ nnoremap <silent> [prefix]os :CODSelected<CR>
 noremap <silent> [prefix]k :<C-u>CODSearch <C-r><C-w><CR>
 
 "make を途中まで割り当てる
-noremap  [prefix]m :<C-u>make<Space>
+noremap [prefix]m :<C-u>w<CR>:<C-u>make<Space>
 
 " オムニ補完を割り当てる
 inoremap <C-s> <C-x><C-o><C-p>
@@ -595,56 +595,79 @@ noremap   [prefix]p "0p
 " Y を D と同じ動作にする
 noremap Y y$
 
+" 全体をフィルタ
+noremap [prefix]= gg<C-v>G=<C-o><C-o>
+
+" quick fix
+"http://qiita.com/yuku_t/items/0c1aff03949cb1b8fe6b
+"vimgrep
+" :cn :cN :cp :cfirst :clast
+nnoremap [q :cprevious<CR>   " 前へ
+nnoremap ]q :cnext<CR>       " 次へ
+nnoremap [Q :<C-u>cfirst<CR> " 最初へ
+nnoremap ]Q :<C-u>clast<CR>  " 最後へ
+nnoremap [prefix]qo :<C-u>cope<CR>
+nnoremap [prefix]qq :<C-u>cope<CR>
+nnoremap [prefix]qc :<C-u>ccl<CR>
+nnoremap [prefix]qQ :<C-u>ccl<CR>
+nnoremap [prefix]qw :<C-u>cc<CR>
+nnoremap [prefix]ql :<C-u>cc<CR>
+nnoremap [prefix]qL :<C-u>ll<CR>
+" colder cnewer
+
+" 終了
+" nnoremap [prefix].q :<C-u>q!<CR>
+
 "------------------------------------------------------------
 "矢印キーを禁止する
 let s:no_cursor = 1
 "if exists('s:no_cursor')
 if s:no_cursor == 1
-	map <Up> <Nop>
-	map <Down> <Nop>
-	map <Left> <Nop>
-	map <Right> <Nop>
-	inoremap <Up> <Nop>
-	inoremap <Down> <Nop>
-	" <Nop>にすると，日本語変換した時に2回挿入される
-	"inoremap <Left> <Nop>
-	inoremap <Right> <Nop>
+    map <Up> <Nop>
+    map <Down> <Nop>
+    map <Left> <Nop>
+    map <Right> <Nop>
+    inoremap <Up> <Nop>
+    inoremap <Down> <Nop>
+    " <Nop>にすると，日本語変換した時に2回挿入される
+    "inoremap <Left> <Nop>
+    inoremap <Right> <Nop>
 
-	""noremap  <Left>  <Nop>
-	""	noremap  <Right> <Nop>
-	""	noremap  <Down>  <Nop>
-	""	noremap  <Up>    <Nop>
-	"	inoremap <Left>  <Nop>
-	"	inoremap <Right> <Nop>
-	"	inoremap <Down>  <Nop>
-	"	inoremap <Up>    <Nop>
-	"else
-	"	noremap  <Left>  <Left>
-	"	noremap  <Right> <Right>
-	"	noremap  <Down>  <Down>
-	"	noremap  <Up>    <Up>
-	"	inoremap <Left>  <Left>
-	"	inoremap <Right> <Right>
-	"	inoremap <Down>  <Down>
-	"	inoremap <Up>    <Up>
+    ""noremap  <Left>  <Nop>
+    ""	noremap  <Right> <Nop>
+    ""	noremap  <Down>  <Nop>
+    ""	noremap  <Up>    <Nop>
+    "	inoremap <Left>  <Nop>
+    "	inoremap <Right> <Nop>
+    "	inoremap <Down>  <Nop>
+    "	inoremap <Up>    <Nop>
+    "else
+    "	noremap  <Left>  <Left>
+    "	noremap  <Right> <Right>
+    "	noremap  <Down>  <Down>
+    "	noremap  <Up>    <Up>
+    "	inoremap <Left>  <Left>
+    "	inoremap <Right> <Right>
+    "	inoremap <Down>  <Down>
+    "	inoremap <Up>    <Up>
 endif
 
 " インサートモードで移動する
 let s:insert_mode_move = 0
 if s:insert_mode_move == 1
-   " inoremap <silent> <C-h> <Left>
-   " inoremap <silent> <C-j> <Right>
-   " inoremap <silent> <C-k> <Down>
-   " inoremap <silent> <C-l> <Up>
-" cnoremap <C-h> <Left>
-" cnoremap <C-j> <Right>
-" cnoremap <C-k> <Down>
-" cnoremap <C-l> <Up>
-"
-" 	inoremap <silent> <C-h> <C-o>h
-" 	inoremap <silent> <C-j> <C-o>j
-" 	inoremap <silent> <C-k> <C-o>k
-" 	inoremap <silent> <C-l> <C-o>l
+    " inoremap <silent> <C-h> <Left>
+    " inoremap <silent> <C-j> <Right>
+    " inoremap <silent> <C-k> <Down>
+    " inoremap <silent> <C-l> <Up>
+    " cnoremap <C-h> <Left>
+    " cnoremap <C-j> <Right>
+    " cnoremap <C-k> <Down>
+    " cnoremap <C-l> <Up>
+    "
+    " 	inoremap <silent> <C-h> <C-o>h
+    " 	inoremap <silent> <C-j> <C-o>j
+    " 	inoremap <silent> <C-k> <C-o>k
+    " 	inoremap <silent> <C-l> <C-o>l
 endif
 
 "----------------------------
@@ -681,36 +704,68 @@ nnoremap [prefix]sn gt
 nnoremap [prefix]sp gT
 nnoremap [prefix]st :<C-u>tabnew<CR>
 "ウィンドウの大きさ変更
+
+" prefix s : windows 's'ize change
 ""ウィンドウを閉じる
 nnoremap [prefix]sq :<C-u>q<CR>
 ""縦横最大化
 nnoremap [prefix]so <C-w>_<C-w>|
 ""大きさを揃える
+
 nnoremap [prefix]s= <C-w>=
 nnoremap [prefix]sO <C-w>=
 "vim-submode を使って連続入力する
 " <Space>を[prefix]にするとエラー
-call submode#enter_with('bufmove', 'n', '', '<Space>s>', '<C-w>>')
-call submode#enter_with('bufmove', 'n', '', '<Space>s<', '<C-w><')
-call submode#enter_with('bufmove', 'n', '', '<Space>s+', '<C-w>+')
-call submode#enter_with('bufmove', 'n', '', '<Space>s-', '<C-w>-')
-call submode#map('bufmove', 'n', '', '>', '<C-w>>')
-call submode#map('bufmove', 'n', '', '<', '<C-w><')
-call submode#map('bufmove', 'n', '', '+', '<C-w>+')
-call submode#map('bufmove', 'n', '', '-', '<C-w>-')
-call submode#map('bufmove', 'n', '', 'l', '<C-w>><C-w>><C-w>>')
-call submode#map('bufmove', 'n', '', 'h', '<C-w><<C-w><<C-w><')
-call submode#map('bufmove', 'n', '', 'j', '<C-w>+<C-w>+<C-w>+')
-call submode#map('bufmove', 'n', '', 'k', '<C-w>-<C-w>-<C-w>-')
+
+" 初めての環境でエラーになるので
+if &runtimepath =~# ".*vim-submode"
+    " s size_win
+    " モード名、モードの種類、 マップの種類、 マップのlhs, rhs
+    call submode#enter_with('size_win', 'n', '', '<Space>s>', '<C-w>>')
+    call submode#enter_with('size_win', 'n', '', '<Space>s<', '<C-w><')
+    call submode#enter_with('size_win', 'n', '', '<Space>s+', '<C-w>+')
+    call submode#enter_with('size_win', 'n', '', '<Space>s-', '<C-w>-')
+    call submode#enter_with('size_win', 'n', '', '<Space>sl', '3<C-w>>')
+    call submode#enter_with('size_win', 'n', '', '<Space>sh', '3<C-w><')
+    call submode#enter_with('size_win', 'n', '', '<Space>sj', '3<C-w>+')
+    call submode#enter_with('size_win', 'n', '', '<Space>sk', '3<C-w>-')
+    call submode#map('size_win', 'n', '', '>', '<C-w>>')
+    call submode#map('size_win', 'n', '', '<', '<C-w><')
+    call submode#map('size_win', 'n', '', '+', '<C-w>+')
+    call submode#map('size_win', 'n', '', '-', '<C-w>-')
+    call submode#map('size_win', 'n', '', 'l', '3<C-w>>')
+    call submode#map('size_win', 'n', '', 'h', '3<C-w><')
+    call submode#map('size_win', 'n', '', 'j', '3<C-w>+')
+    call submode#map('size_win', 'n', '', 'k', '3<C-w>-')
+    " undo/redo
+	call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
+	call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
+	call submode#leave_with('undo/redo', 'n', '', '<Esc>')
+	call submode#map('undo/redo', 'n', '', '-', 'g-')
+	call submode#map('undo/redo', 'n', '', '+', 'g+')
+    " タブ
+    function! s:SIDP()
+        return '<SNR>' . matchstr(expand('<sfile>'), '<SNR>\zs\d+\ze_SIDP$') . '_'
+    endfunction
+    function! s:movetab(nr)
+        execute 'tabmove' g:V.modulo(tabpagenr() + a:nr - 1, tabpagenr('$'))
+    endfunction
+    let s:movetab = ':<C-u>call ' . s:SIDP() . 'movetab(%d)<CR>'
+    call submode#enter_with('movetab', 'n', '', '<Space>gt', printf(s:movetab, 1))
+    call submode#enter_with('movetab', 'n', '', '<Space>gT', printf(s:movetab, -1))
+    call submode#map('movetab', 'n', '', 't', printf(s:movetab, 1))
+    call submode#map('movetab', 'n', '', 'T', printf(s:movetab, -1))
+    unlet s:movetab
+endif
 
 "-----------------------------------------------------
 " 自作関数 {{{
 " 構文チェック用
 function! s:Gcc()
-	:w
-	:!g++ %
-	":!g++ % -o %.out
-	":!%.out
+    :w
+    :!g++ %
+    ":!g++ % -o %.out
+    ":!%.out
 endfunction
 command! Gcc :call s:Gcc()
 "}}}
@@ -729,7 +784,7 @@ inorea CCS //======================================
 inorea CCL //==============================================================================
 inorea SS #---------------------------------------
 inorea SL #-------------------------------------------------------------------------------
-inorea AB_CF int Func( ){}
+inorea AB_CF int Func( ) { }
 "---------------------------------------
 inorea TEXI \begin{itemize}<CR>\item <CR>\end{itemize}<CR>
 "---------------------------------------
@@ -997,9 +1052,9 @@ nnoremap g<C-a> ggVG
 " 上を矩形選択して(<C-v>，レジスタに入れて("yy)，それをマクロとして実行(@y)
 "
 func! s:func_copy_cmd_output(cmd)
-	redir @">
-	silent execute a:cmd
-	redir END
+    redir @">
+    silent execute a:cmd
+    redir END
 endfunc
 command! -nargs=1 -complete=command CopyCmdOutput call <SID>func_copy_cmd_output(<q-args>)
 
@@ -1192,16 +1247,8 @@ set mouse=a
 "9. 最終検索パターン用レジスタ "/
 
 
-"http://qiita.com/yuku_t/items/0c1aff03949cb1b8fe6b
-"vimgrep
-" :cn :cN :cp :cfirst :clast
-nnoremap [q :cprevious<CR>   " 前へ
-nnoremap ]q :cnext<CR>       " 次へ
-nnoremap [Q :<C-u>cfirst<CR> " 最初へ
-nnoremap ]Q :<C-u>clast<CR>  " 最後へ
-"直前のコマンドを実行する ": を使っているので，map した場合は効かない ??
-"nnoremap <Space><Space> :<C-u><C-r>:<CR>
-"@: に等しい 一度@:した後は @@ で繰り返せる
+"直前のコマンドを実行する
+":<C-u><C-r>:<CR> "@:"に等しい 一度@:した後は @@ で繰り返せる
 
 " Vim からみた Emacs
 " http://www.slideshare.net/Shougo/vimemacs
@@ -1222,8 +1269,8 @@ set showcmd
 nnoremap <silent> co :ContinuousNumber <C-a><CR>
 vnoremap <silent> co :ContinuousNumber <C-a><CR>
 command! -count -nargs=1 ContinuousNumber
-		\ let cl = col('.') | for nc in range(1, <count>?<count>-line('.'):1)|
-		\ exe 'normal! j'.nc.<q-args>|call cursor('.', cl)|endfor|unlet cl|unlet snf
+            \ let cl = col('.') | for nc in range(1, <count>?<count>-line('.'):1)|
+                \ exe 'normal! j'.nc.<q-args>|call cursor('.', cl)|endfor|unlet cl|unlet snf
 " <C-a> の際にどうインクリメントさせるか "16進のみ，英字，8進は使わない
 " set nrformats =alpha,hex,octal
 set nrformats =hex
@@ -1297,7 +1344,8 @@ let $VIM_CPP_STDLIB = "/usr/include/c++/4.6,/usr/local/include,usr/include"
 " C++ のインクルードディレクトリ
 " 複数の場合は , 区切りで設定
 "  $ gcc -print-search-dirs
-let $VIM_CPP_INCLUDE_DIR = ".,/usr/include,usr/local/include"
+let $VIM_CPP_INCLUDE_DIR = ".,/usr/include,usr/local/include,/usr/include/boost,/usr/local/include/opencv"
+" neo_complete の path はどこまで通せばよいか
 
 " :h ft-c-syntax
 " コメント内の文字列と数値
@@ -1310,58 +1358,86 @@ let c_comment_strings=1
 " filetype=cpp の設定はこの関数内で行う
 " set ではなくて setlocal を使用する
 function! CppVimrcOnFileType_cpp()
-	"タブ文字の長さ
-	setlocal tabstop=4
-	setlocal shiftwidth=4
-	" 空白文字ではなくてタブ文字を使用する
-	"setlocal noexpandtab
-	" 空白文字を使用する
-	setlocal expandtab
-	" 自動インデントを行わない
-	"setlocal nocindent
-	setlocal autoindent
-	setlocal smartindent
-	setlocal cindent
-	" 最後に定義された include 箇所へ移動してを挿入モードへ
-	nnoremap <buffer><silent> <Space>ii :execute "?".&include<CR> :noh<CR> o
-	"
-	"
+    "タブ文字の長さ
+    setlocal tabstop=4
+    setlocal shiftwidth=4
+    " 空白文字ではなくてタブ文字を使用する
+    "setlocal noexpandtab
+    " 空白文字を使用する
+    setlocal expandtab
+    " 自動インデントを行わない
+    "setlocal nocindent
+    setlocal autoindent
+    setlocal smartindent
+    setlocal cindent
+    " 最後に定義された include 箇所へ移動してを挿入モードへ
+    nnoremap <buffer><silent> <Space>ii :execute "?".&include<CR> :noh<CR> o
+    "
+    "
 
 endfunction
 
 " C++ の設定
 " FileType_cpp() 関数が定義されていれば最後にそれを呼ぶ
 function! s:cpp()
-	" インクルードパスを設定する
-	" gf などでヘッダーファイルを開きたい場合に影響する
-	let &l:path = join(filter(split($VIM_CPP_STDLIB . "," . $VIM_CPP_INCLUDE_DIR, '[,;]'), 'isdirectory(v:val)'), ',')
-
-	" 括弧を構成する設定に <> を追加する
-	" template<> を多用するのであれば
-	setlocal matchpairs+=<:>
-
-	" BOOST_PP_XXX 等のハイライトを行う
-	syntax match boost_pp /BOOST_PP_[A-z0-9_]*/
-	highlight link boost_pp cppStatement
+    " インクルードパスを設定する
+    " gf などでヘッダーファイルを開きたい場合に影響する
+    let &l:path = join(filter(split($VIM_CPP_STDLIB . "," . $VIM_CPP_INCLUDE_DIR, '[,;]'), 'isdirectory(v:val)'), ',')
 
 
+    " 括弧を構成する設定に <> を追加する
+    " template<> を多用するのであれば
+    setlocal matchpairs+=<:>
 
-	" quickrun.vim の設定
-	let b:quickrun_config = {
-\		"hook/add_include_option/enable" : 1
-\	}
+    " BOOST_PP_XXX 等のハイライトを行う
+    syntax match boost_pp /BOOST_PP_[A-z0-9_]*/
+    highlight link boost_pp cppStatement
 
-	if exists("*CppVimrcOnFileType_cpp")
-		call CppVimrcOnFileType_cpp()
-	endif
+
+    " quickrun.vim の設定
+    let b:quickrun_config = {
+                \		"hook/add_include_option/enable" : 1
+                \	}
+
+    if exists("*CppVimrcOnFileType_cpp")
+        call CppVimrcOnFileType_cpp()
+    endif
 endfunction
+
+" " http://d.hatena.ne.jp/osyo-manga/20120205/1328368314
+" " neocomplcache が作成した tag ファイルのパスを tags に追加する
+" function! s:TagsUpdate()
+"     " include している tag ファイルが毎回同じとは限らないので毎回初期化
+"     setlocal tags=
+"     for filename in neocomplcache#sources#include_complete#get_include_files(bufnr('%'))
+"         execute "setlocal tags+=".neocomplcache#cache#encode_name('tags_output', filename)
+"     endfor
+" endfunction
+"
+" command! -nargs=? PopupTags call <SID>TagsUpdate() | Unite tag:<args>
+"
+" function! s:get_func_name(word)
+"     let end = match(a:word, '<\|[\|(')
+"     return end == -1 ? a:word : a:word[ : end-1 ]
+" endfunction
+"
+"
+" " カーソル下のワード(word)で絞り込み
+" noremap <silent> g<C-]> :<C-u>execute "PopupTags ".expand('<cword>')<CR>
+"
+" " カーソル下のワード(WORD)で ( か < か [ までが現れるまでで絞り込み
+" " 例)
+" " boost::array<std::stirng... → boost::array で絞り込み
+" noremap <silent> G<C-]> :<C-u>execute "PopupTags "
+"     \.substitute(<SID>get_func_name(expand('<cWORD>')), '\:', '\\\:', "g")<CR>
+
 
 " cpp に関する設定
 augroup vimrc-cpp
-	autocmd!
-	" filetype=cpp が設定された場合に関数を呼ぶ
-	autocmd FileType cpp call s:cpp()
-	autocmd FileType c call s:cpp()
+    autocmd!
+    " filetype=cpp が設定された場合に関数を呼ぶ
+    autocmd FileType cpp call s:cpp()
+    autocmd FileType c call s:cpp()
 augroup END
 
 " キーワード補完 	C-p or C-n
@@ -1390,9 +1466,29 @@ augroup END
 command! EditNote  execute  'edit strftime("%Y-%m-%d %H:%M")'
 
 function! g:EditNoteDate()
-	let date = strftime("%Y-%m-%d %H:%M")
+    let date = strftime("%Y-%m-%d %H:%M")
     echo date
-	edit "note." . date . "txt"
+    edit "note." . date . "txt"
 endfunction
 
-set runtimepath+=~/.vim/test
+" テスト用
+set runtimepath+=~/.vim/account_diary.vim
+
+
+" Vimですべてのバッファをタブ化する
+" :bufdo tab split
+" :tab ball
+" 全てのバッファをウィンドウに表示 垂直
+" :vert ball
+" スクロールを同期
+" :set scrollbind
+" :set noscb
+"
+" vim echo の出力をバッファに書きこみたい
+
+
+
+" yank
+" :wv
+" :rv!
+" paste

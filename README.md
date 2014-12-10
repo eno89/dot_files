@@ -1,2 +1,5 @@
 dot_files
 =========
+
+# .vimrc
+

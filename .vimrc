@@ -1,6 +1,6 @@
 "-------------------------------------------------------------------------------
 " OS : Ubuntu 12.04
-" kbd : HHKB_Pro
+" kbd : HHKB (英語)
 " Vim : 7.4.347
 "  ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp
 "  --enable-pythoninterp  --enable-python3interp --enable-rubyinterp
@@ -183,7 +183,7 @@ NeoBundle 'fuenor/im_control.vim'
 "NeoBundle 'bouzuya/vim-ibus'
 "
 " http://easyramble.com/how-to-use-surround-vim.html
-" NeoBundle 'surround.vim'
+NeoBundle 'surround.vim'
 NeoBundle 'tpope/vim-speeddating'
 
 " 新型スカウターを開発した
@@ -195,14 +195,12 @@ NeoBundle 'thinca/vim-scouter'
 NeoBundle 'glidenote/memolist.vim'
 "let g:memolist_path = "
 "
-"NeoBundleLazy 'kannokanno/previm' , { 'autoload' : { 'filetypes' : 'markdown' } }
-NeoBundle 'kannokanno/previm'
+NeoBundleLazy 'kannokanno/previm' , { 'autoload' : { 'filetypes' : 'markdown' } }
 
-
-"augroup PrevimSettings
-"  autocmd!
-"  autocmd BufNewFile,BufRead *.{md,mdwn,mkd,mkdn,mark*} set filetype=markdown
-"augroup END
+augroup PrevimSettings
+    autocmd!
+    autocmd BufNewFile,BufRead *.{md,mdwn,mkd,mkdn,mark*} set filetype=markdown
+augroup END
 "カーソル行のURLをブラウザで開く {{{
 "htp://d.hatena.ne.jp/shunsuk/20110508/1304865150
 "URIを開くプラグイン
@@ -246,8 +244,24 @@ NeoBundle "tsukkee/unite-tag"
 NeoBundle "tsukkee/unite-help"
 
 
+NeoBundle "mattn/webapi-vim"
+NeoBundle "mattn/excitetranslate-vim"
+" http://www.absolute-keitarou.net/blog/?p=1239
+NeoBundle "mattn/unite-mcdonalds-vim"
+
+" http://daisuzu.hatenablog.com/entry/2013/12/22/153834
+NeoBundle "daisuzu/translategoogle.vim"
+
 NeoBundle "tyru/caw.vim"
 
+NeoBundle "VOoM"
+
+NeoBundle "rbtnn/vimconsole.vim"
+
+NeoBundle "vim-scripts/DoxygenToolkit.vim"
+" Dox...
+
+let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 
 augroup UniteN3337
     autocmd!
@@ -263,6 +277,7 @@ augroup END
 
 "
 NeoBundle "Shougo/vimfiler.vim"
+let g:vimfiler_as_default_explorer = 1
 
 " Vim-Easymotionを拡張してカーソルを縦横無尽に楽々移動する
 " http://haya14busa.com/vim-lazymotion-on-speed/
@@ -396,6 +411,8 @@ let g:neocomplete#force_overwrite_completefunc = 1
 let g:neocomplete#force_omni_input_patterns.c =
             \ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
 let g:neocomplete#force_omni_input_patterns.cpp =
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+let g:neocomplete#force_omni_input_patterns.hpp =
             \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
@@ -541,7 +558,12 @@ nnoremap [prefix]sB :<C-u>Unite buffer -buffer-name=file<CR>
 "nnoremap Q  <Nop>
 "nnoremap ZQ <Nop>
 "nnoremap qq <Nop>
-"
+
+" 整形 " IndentFormat
+nnoremap Q gq
+vnoremap <silent> [prefix]Q !indent -linux<CR>gv=
+vnoremap <silent> [prefix]= call <SID>IndentFormat()
+
 "打ちづらいキーの割り当て
 noremap  [prefix]h ^
 noremap  [prefix]l $
@@ -562,8 +584,7 @@ nnoremap [prefix].l :<C-u>lcd %:p:h<CR>
 nnoremap [prefix].L :<C-u>cd %:p:h<CR>
 nnoremap [prefix].h :<C-u>help<Space>
 "
-" Vim テクニックバイブル 4-16
-" 検索結果のハイライトの消去 erase noh[lsearch]
+" 検索結果のハイライトの消去 noh[lsearch]
 nnoremap [prefix]./ :nohlsearch<CR>
 
 " cursoroverdictionary
@@ -596,7 +617,8 @@ noremap   [prefix]p "0p
 noremap Y y$
 
 " 全体をフィルタ
-noremap [prefix]= gg<C-v>G=<C-o><C-o>
+" nnoremap [prefix]= gg<C-v>G=<C-o><C-o>
+" noremap [prefix]= gg<C-v>G=<C-o><C-o>
 
 " quick fix
 "http://qiita.com/yuku_t/items/0c1aff03949cb1b8fe6b
@@ -620,7 +642,7 @@ nnoremap [prefix]qL :<C-u>ll<CR>
 
 "------------------------------------------------------------
 "矢印キーを禁止する
-let s:no_cursor = 1
+let s:no_cursor = 0
 "if exists('s:no_cursor')
 if s:no_cursor == 1
     map <Up> <Nop>
@@ -677,17 +699,17 @@ endif
 " 分割したウィンドウの移動	水平分割 垂直分割 次
 nnoremap [prefix]ss :<C-u>sp<CR>
 nnoremap [prefix]sv :<C-u>vs<CR>
-nnoremap [prefix]sw <C-w>w
-nnoremap [prefix]sj <C-w>j
-nnoremap [prefix]sk <C-w>k
-nnoremap [prefix]sl <C-w>l
-nnoremap [prefix]sh <C-w>h
+nnoremap [prefix]ww <C-w>w
+nnoremap [prefix]wj <C-w>j
+nnoremap [prefix]wk <C-w>k
+nnoremap [prefix]wl <C-w>l
+nnoremap [prefix]wh <C-w>h
 " 分割したウィンドウ自体を移動
-nnoremap [prefix]sr <C-w>r
-nnoremap [prefix]sJ <C-w>J
-nnoremap [prefix]sK <C-w>K
-nnoremap [prefix]sL <C-w>L
-nnoremap [prefix]sH <C-w>H
+nnoremap [prefix]wr <C-w>r
+nnoremap [prefix]wJ <C-w>J
+nnoremap [prefix]wK <C-w>K
+nnoremap [prefix]wL <C-w>L
+nnoremap [prefix]wH <C-w>H
 "バッファ 表示 /移動 / 閉じる
 nnoremap [prefix]bs :<C-u>ls<CR>
 nnoremap [prefix]bl :<C-u>ls<CR>
@@ -707,12 +729,28 @@ nnoremap [prefix]st :<C-u>tabnew<CR>
 
 " prefix s : windows 's'ize change
 ""ウィンドウを閉じる
-nnoremap [prefix]sq :<C-u>q<CR>
+nnoremap [prefix]wq :<C-u>q<CR>
 ""縦横最大化
-nnoremap [prefix]so <C-w>_<C-w>|
+nnoremap [prefix]wo <C-w>_<C-w>|
 ""大きさを揃える
 
-nnoremap [prefix]s= <C-w>=
+" project.vim 用
+" nnoremap [prefix]w= <C-w>=<C-w>h:vert res 15<CR>
+nnoremap [prefix]w= <C-w>=<C-w>h<C-w>h:vert res 15<CR>
+nnoremap [prefix]== :<C-u>call <SID>ProvimCol()<CR>
+function! s:ProvimCol()
+" "     let s:procol = &columns - 15
+"     normal <C-w>=
+"     vert res 15
+" "     execute 'normal <C-w>='
+" "     execute 'vert res 15'
+"     execute 'normal :echo "a"\<CR>'
+	normal mx
+	execute "normal <C-w>=<C-w>h<C-w>h"
+    vert res 15
+	normal 'x
+endfunction
+" nnoremap [prefix]w= <C-w>=:vert res l:procol<CR>echo s:procol<CR>
 nnoremap [prefix]sO <C-w>=
 "vim-submode を使って連続入力する
 " <Space>を[prefix]にするとエラー
@@ -721,14 +759,14 @@ nnoremap [prefix]sO <C-w>=
 if &runtimepath =~# ".*vim-submode"
     " s size_win
     " モード名、モードの種類、 マップの種類、 マップのlhs, rhs
-    call submode#enter_with('size_win', 'n', '', '<Space>s>', '<C-w>>')
-    call submode#enter_with('size_win', 'n', '', '<Space>s<', '<C-w><')
-    call submode#enter_with('size_win', 'n', '', '<Space>s+', '<C-w>+')
-    call submode#enter_with('size_win', 'n', '', '<Space>s-', '<C-w>-')
-    call submode#enter_with('size_win', 'n', '', '<Space>sl', '3<C-w>>')
-    call submode#enter_with('size_win', 'n', '', '<Space>sh', '3<C-w><')
-    call submode#enter_with('size_win', 'n', '', '<Space>sj', '3<C-w>+')
-    call submode#enter_with('size_win', 'n', '', '<Space>sk', '3<C-w>-')
+    call submode#enter_with('size_win', 'n', '', '<Space>w>', '<C-w>>')
+    call submode#enter_with('size_win', 'n', '', '<Space>w<', '<C-w><')
+    call submode#enter_with('size_win', 'n', '', '<Space>w+', '<C-w>+')
+    call submode#enter_with('size_win', 'n', '', '<Space>w-', '<C-w>-')
+    call submode#enter_with('size_win', 'n', '', '<Space>wl', '3<C-w>>')
+    call submode#enter_with('size_win', 'n', '', '<Space>wh', '3<C-w><')
+    call submode#enter_with('size_win', 'n', '', '<Space>wj', '3<C-w>+')
+    call submode#enter_with('size_win', 'n', '', '<Space>wk', '3<C-w>-')
     call submode#map('size_win', 'n', '', '>', '<C-w>>')
     call submode#map('size_win', 'n', '', '<', '<C-w><')
     call submode#map('size_win', 'n', '', '+', '<C-w>+')
@@ -738,11 +776,11 @@ if &runtimepath =~# ".*vim-submode"
     call submode#map('size_win', 'n', '', 'j', '3<C-w>+')
     call submode#map('size_win', 'n', '', 'k', '3<C-w>-')
     " undo/redo
-	call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
-	call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
-	call submode#leave_with('undo/redo', 'n', '', '<Esc>')
-	call submode#map('undo/redo', 'n', '', '-', 'g-')
-	call submode#map('undo/redo', 'n', '', '+', 'g+')
+    call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
+    call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
+    call submode#leave_with('undo/redo', 'n', '', '<Esc>')
+    call submode#map('undo/redo', 'n', '', '-', 'g-')
+    call submode#map('undo/redo', 'n', '', '+', 'g+')
     " タブ
     function! s:SIDP()
         return '<SNR>' . matchstr(expand('<sfile>'), '<SNR>\zs\d+\ze_SIDP$') . '_'
@@ -767,7 +805,8 @@ function! s:Gcc()
     ":!g++ % -o %.out
     ":!%.out
 endfunction
-command! Gcc :call s:Gcc()
+" command! Gcc call s:Gcc()
+command! Gcc call <SID>Gcc()
 "}}}
 
 
@@ -790,7 +829,7 @@ inorea TEXI \begin{itemize}<CR>\item <CR>\end{itemize}<CR>
 "---------------------------------------
 "" Vim テクニックバイブル 5-3
 " 数が合わない 77になる
-inoreabbrev <expr> dl repeat('*', 80 - col('.'))
+inoreabbrev <expr> DL repeat('*', 80 - col('.'))
 " Expression レジスタ
 " "=repeat('*', 80 - virtcol('.'))<CR>p
 "}}}
@@ -931,7 +970,7 @@ au InsertLeave * hi StatusLine guifg=DarkBlue guibg=DarkGray   gui=none ctermfg=
 set listchars=tab:>-,trail:-,nbsp:-,extends:>,precedes:<,
 " http://qiita.com/quenhulu/items/34ff426744a8c20d3604
 " expand コマンドで　タブとスペース(8個)を変換できる
-" Tab->Space :%!expand -t 4
+" Tab2Space :%!expand -t 4
 " Space->Tab :%!unexpand -a or -t 4
 " ファイル全体の場合
 " Space -> Tab
@@ -1313,17 +1352,12 @@ set t_Co=256
 "	変数の定義に移動
 "		gd 				ローカル変数定義に移動
 "		[d 				defineの値コマンドバーに表示
-"
 "	関数へ移動
 "		Ctrl + ]   		関数先に移動
 "		Ctrl + t   		元に戻る
 "		Ctrl + w + ]	Windowを分割して移動
-"
-"
-"
 "  インクルードファイルを開く
 "   gf
-"
 "  vi-difference vi_diff
 
 " unipared.vim
@@ -1344,7 +1378,7 @@ let $VIM_CPP_STDLIB = "/usr/include/c++/4.6,/usr/local/include,usr/include"
 " C++ のインクルードディレクトリ
 " 複数の場合は , 区切りで設定
 "  $ gcc -print-search-dirs
-let $VIM_CPP_INCLUDE_DIR = ".,/usr/include,usr/local/include,/usr/include/boost,/usr/local/include/opencv"
+let $VIM_CPP_INCLUDE_DIR = ".,/usr/include,usr/local/include,/usr/include/boost,/usr/local/include/opencv,/opt/cv/include"
 " neo_complete の path はどこまで通せばよいか
 
 " :h ft-c-syntax
@@ -1359,22 +1393,21 @@ let c_comment_strings=1
 " set ではなくて setlocal を使用する
 function! CppVimrcOnFileType_cpp()
     "タブ文字の長さ
-    setlocal tabstop=4
-    setlocal shiftwidth=4
+    setlocal tabstop=2
+    setlocal shiftwidth=2
     " 空白文字ではなくてタブ文字を使用する
     "setlocal noexpandtab
     " 空白文字を使用する
     setlocal expandtab
     " 自動インデントを行わない
-    "setlocal nocindent
     setlocal autoindent
     setlocal smartindent
     setlocal cindent
+    " 	http://d.hatena.ne.jp/alwei/20111106/1320595940
+    setlocal cinoptions+=:0,g0
+
     " 最後に定義された include 箇所へ移動してを挿入モードへ
     nnoremap <buffer><silent> <Space>ii :execute "?".&include<CR> :noh<CR> o
-    "
-    "
-
 endfunction
 
 " C++ の設定
@@ -1383,17 +1416,13 @@ function! s:cpp()
     " インクルードパスを設定する
     " gf などでヘッダーファイルを開きたい場合に影響する
     let &l:path = join(filter(split($VIM_CPP_STDLIB . "," . $VIM_CPP_INCLUDE_DIR, '[,;]'), 'isdirectory(v:val)'), ',')
-
-
     " 括弧を構成する設定に <> を追加する
     " template<> を多用するのであれば
     setlocal matchpairs+=<:>
-
     " BOOST_PP_XXX 等のハイライトを行う
     syntax match boost_pp /BOOST_PP_[A-z0-9_]*/
     highlight link boost_pp cppStatement
-
-
+	nnoremap [prefix].d :<C-u>Dox<CR>
     " quickrun.vim の設定
     let b:quickrun_config = {
                 \		"hook/add_include_option/enable" : 1
@@ -1449,7 +1478,6 @@ augroup END
 " clang complete	C-x C-u
 
 
-
 " プラグイン案
 " - 行数を 上下 が nH nL で移動できる数はその数で表示する
 " - 翻訳用にファイルを読み込んだら，その下に一行のスペース行を追加する
@@ -1460,8 +1488,6 @@ augroup END
 "
 " csv の2番目でソート
 " :'<,'>!sort -t, -k 2
-"
-"
 "
 command! EditNote  execute  'edit strftime("%Y-%m-%d %H:%M")'
 
@@ -1474,7 +1500,6 @@ endfunction
 " テスト用
 set runtimepath+=~/.vim/account_diary.vim
 
-
 " Vimですべてのバッファをタブ化する
 " :bufdo tab split
 " :tab ball
@@ -1486,9 +1511,47 @@ set runtimepath+=~/.vim/account_diary.vim
 "
 " vim echo の出力をバッファに書きこみたい
 
-
-
-" yank
+" 他のvim のバッファを使う
+" yank  (vim A)
 " :wv
-" :rv!
+" :rv!  (vim B)
 " paste
+"
+" set si
+
+let s:unite_source = { 'name': 'mylines'}
+function! s:unite_source.gather_candidates(args, context)
+    let mylines = getbufline('#', 1, '$')
+    let path = expand('#:p')
+    let format = '%' . strlen(len(mylines)) . 'd:%s'
+    return map(mylines, '{"word": printf(format, v:key+1, v:val), "source": "mylines",
+                \ "kind": "jump_list", "action__path": path, "action__line": v:key+1}')
+endfunction
+
+call unite#define_source(s:unite_source)
+unlet s:unite_source
+
+let s:unite_source = { 'name': 'lines', }
+function! s:unite_source.gather_candidates(args, context)
+    let path = expand('#:p')
+    echomsg path
+    let lines = getbufline('#', 1, '$')
+    let format = '%' . strlen(len(lines)) . 'd: %s'
+    let l:mymap = map(lines, '{
+                \   "word": printf(format, v:key + 1, v:val),
+                \   "source": "lines",
+                \   "kind": "jump_list",
+                \   "action__path": path,
+                \   "action__line": v:key + 1,
+                \ }')
+    return mymap
+endfunction
+
+" 整形 " IndentFormat
+function! IndentFormat() range
+    !indent - linux
+	normal =
+endfunction
+command! -count -nargs=1 IndentFormat
+
+" vim:tw=78:ts=4:ft=vim:noet

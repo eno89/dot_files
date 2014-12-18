@@ -357,8 +357,9 @@ let g:eskk#cursor_color = {   'ascii': ['#8b8b83', '#bebebe'],
 " <C-g>u  で元 にもどす?
 let g:eskk#set_undo_point = { 'sticky': 1,	'kakutei': 1 }
 " MP_ESKK
+" http://hitode909.hatenablog.com/entry/20110421/1303274561
+" google-ime-skk
 " }
-
 " Makeを拡張 http://ac-mopp.blogspot.jp/2014/02/vimmakemake.html
 "  nargs を書き換え
 NeoBundle 'mopp/makecomp.vim'
@@ -544,7 +545,7 @@ nnoremap [prefix]./ :nohlsearch<CR>
 " 終了
 " nnoremap [prefix].q :<C-u>q!<CR>
 " オムニ補完を割り当てる
-inoremap <C-s> <C-x><C-o><C-p>
+inoremap <C-S> <C-X><C-O><C-P>
 
 " 0レジスタを簡易クリップボードにする
 " 選択範囲を削除，なんか操作して，貼り付け．みたいな動作
@@ -560,15 +561,15 @@ noremap   [prefix]p "0p
 " vimgrep cn cN cp cfirst clast colder cnewer
 nnoremap [q :cprevious<CR>   " 前へ
 nnoremap ]q :cnext<CR>       " 次へ
-nnoremap [Q :<C-u>cfirst<CR> " 最初へ
-nnoremap ]Q :<C-u>clast<CR>  " 最後へ
-nnoremap [prefix]qo :<C-u>cope<CR>
-nnoremap [prefix]qq :<C-u>cope<CR>
-nnoremap [prefix]qc :<C-u>ccl<CR>
-nnoremap [prefix]qQ :<C-u>ccl<CR>
-nnoremap [prefix]qw :<C-u>cc<CR>
-nnoremap [prefix]ql :<C-u>cc<CR>
-nnoremap [prefix]qL :<C-u>ll<CR>
+nnoremap [Q :<C-U>cfirst<CR> " 最初へ
+nnoremap ]Q :<C-U>clast<CR>  " 最後へ
+nnoremap [prefix]qo :<C-U>cope<CR>
+nnoremap [prefix]qq :<C-U>cope<CR>
+nnoremap [prefix]qc :<C-U>ccl<CR>
+nnoremap [prefix]qQ :<C-U>ccl<CR>
+nnoremap [prefix]qw :<C-U>cc<CR>
+nnoremap [prefix]ql :<C-U>cc<CR>
+nnoremap [prefix]qL :<C-U>ll<CR>
 
 " 各種設定をトグル
 nnoremap [toggle] <Nop>
@@ -580,10 +581,44 @@ nnoremap <silent> [toggle]w :setl wrap!<CR>:setl wrap?<CR><S-Del>
 nnoremap <silent> [toggle]r :setl relativenumber!<CR>:setl relativenumber?<CR><S-Del>
 
 " 全選択
-nnoremap <silent> g<C-a> ggVG
+nnoremap <silent> g<C-A> ggVG
 "nnoremap <Tab> >>
 "nnoremap <Leader><C-i> <C-i>
+"
+" emacs 風キーバインド
+" https://sites.google.com/site/fudist/Home/vim-nihongo-ban/tips/vim-key-emacs
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
+cnoremap <C-B> <Left>
+cnoremap <C-F> <Right>
+cnoremap <M-B> <S-Left>
+
+"カーソル一文字単位移動
+" inoremap <silent> <C-S> <Left>
+inoremap <silent> <C-D> <Right>
+"単語単位移動（行末で止まる必要がない場合）
+inoremap <silent> <C-F> <S-Right>
+inoremap <silent> <C-B> <S-Left>
+"行頭 行末
+inoremap <silent> <C-A> <Home>
+inoremap <silent> <C-E> <End>
+"カーソル前の文字削除
+inoremap <silent> <BS>  <C-g>u<BS>
+inoremap <silent> <C-h> <C-g>u<C-h>
+"カーソル後の文字削除
+inoremap <silent> <Del> <C-g>u<Del>
+inoremap <silent> <C-g> <C-g>u<Del>
+"最後に挿入した文字列を挿入
+inoremap <silent> <C-z> <C-g>u<C-a>
+"現在行をインデント
+" inoremap <silent> <Tab>   <C-g>u<C-t>
+inoremap <silent> <S-Tab> <C-g>u<C-d>
+
+
 " }
+
 
 " 変更・入れ替え {
 "検索の拡張
@@ -1614,6 +1649,10 @@ command! -count -nargs=1 IndentFormat
 " たまに起動が失敗する
 " ^CE852: 子プロセスがGUIの起動に失敗しました
 " 割込み: 続けるにはENTERを押すかコマンドを入力してくださいICE default IO error handler doing an exit(), pid = 12349, errno = 32
+"
+" ファイル名を挿入
+" <C-r>%
+" <C-r>=expand('%:p') "フルパス
 " }}}
 
 " Old {{{1
@@ -1730,3 +1769,41 @@ command! -count -nargs=1 IndentFormat
 " 日本語を変換する変換すると2個2個打たれる打たれる
 " vmap が効かない効かない　コメント切り替え
 "}}}
+"
+"
+" CopyCmdOutput imap
+"
+" i  <SNR>231_(bs-ctrl-]) * getline('.')[col('.') - 2] ==# "\<C-]>" ? "\<BS>" : ''
+" i  <S-Tab>     * <C-G>u<C-D>
+" i  <Del>       * <C-G>u<Del>
+" i  <BS>        * <C-G>u<BS>
+" i  <Plug>(neosnippet_start_unite_snippet) * unite#sources#neosnippet#start_complete()
+" i  <Plug>(neosnippet_jump) * neosnippet#mappings#jump_impl()
+" i  <Plug>(neosnippet_expand) * neosnippet#mappings#expand_impl()
+" i  <Plug>(neosnippet_jump_or_expand) * neosnippet#mappings#jump_or_expand_impl()
+" i  <Plug>(neosnippet_expand_or_jump) * neosnippet#mappings#expand_or_jump_impl()
+" !  <S-Insert>    <MiddleMouse>
+" !  <Plug>(eskk:toggle) * eskk#toggle()
+" !  <Plug>(eskk:disable) * eskk#disable()
+" !  <Plug>(eskk:enable) * eskk#enable()
+" i  <SNR>56_yrrecord * <C-R>=YRRecord3()<CR>
+" i  <SNR>56_YRGetChar & <C-R>=YRGetChar()<CR>
+" i  <Plug>ISurround * <C-R>=<SNR>54_insert(1)<CR>
+" i  <Plug>Isurround * <C-R>=<SNR>54_insert()<CR>
+" i  <Right>     * <Nop>
+" i  <Down>      * <Nop>
+" i  <Up>        * <Nop>
+" i  <C-A>       * <Home>
+" i  <C-B>       * <S-Right>
+" i  <C-D>       * <Right>
+" i  <C-E>       * <End>
+" i  <C-F>       * <S-Left>
+" i  <C-G>       * <C-G>u<Del>
+" i  <C-G>S        <Plug>ISurround
+" i  <C-G>s        <Plug>Isurround
+" i  <C-H>       * <C-G>u<C-H>
+" i  <Tab>         neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)": pumvisible() ? "\<C-N>" : "\<Tab>"
+" i  <NL>          <Plug>(eskk:toggle)
+" i  <C-K>         <Plug>(neosnippet_expand_or_jump)
+" i  <C-S>       * <Left>
+" i  <C-Z>       * <C-G>u<C-A>" i  <Plug>(neosnippet_start_unite_snippet) * unite#sources#neosnippet#start_complete()

@@ -54,7 +54,7 @@ if version >= 500
 ""  highlight NonText guibg=grey80
 ""  highlight Constant gui=NONE guibg=grey95
 ""  highlight Special gui=NONE guibg=grey95
- 
+
 endif
 
 
@@ -63,7 +63,7 @@ endif
 ":set clipboard+=unnamed
 
 " http://itcweb.cc.affrc.go.jp/affrit/faq/tips/vim-enc
-" 文字コード/改行コードの自動判別 
+" 文字コード/改行コードの自動判別
 ":set encoding=utf-8
 ":set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
 ":set fileformats=unix,dos,mac
@@ -74,20 +74,19 @@ endif
 " タブを挿入するときの幅
 "set shiftwidth=2
 
-"set relativenumber 
+"set relativenumber
 "
 "========================================
-
 
 "Hack #120: gVim でウィンドウの位置とサイズを記憶する
 "http://vim-jp.org/vim-users-jp/2010/01/28/Hack-120.html
 function! s:save_window()
-	let options = [
+	let l:options = [
 				\ 'set columns=' . &columns,
 				\ 'set lines=' . &lines,
 				\ 'winpos ' . getwinposx() . ' ' . getwinposy(),
 				\ ]
-	call writefile(options, g:save_window_file)
+	call writefile(l:options, g:save_window_file)
 endfunction
 
 let g:save_window_file = expand('~/.vimwinpos')
@@ -101,6 +100,20 @@ if filereadable(g:save_window_file)
 endif
 
 " ウィンドウの大きさを変える
+" 失敗
+command! WindowMove call <SID>WindowMove(<q-args>)
+command! WindowMoveLeft call <SID>WindowMove(0,0)
+command! WindowMoveRight call <SID>WindowMove(975,0)
+" うまくいかない
+function! s:WindowMove(x, y)
+	winpos a:x a:y
+endfunction
+function! s:WindowMoveScale(x, y, w, h)
+	winpos a:x a:y
+	set columns=a:w
+	set lines=a:h
+endfunction
+"
 function! g:WindowMoveLeft()
 	winpos 0 0
 endfunction
@@ -110,16 +123,25 @@ endfunction
 function! g:WindowMini()
 	set columns=130
 	set lines=35
-	winpos 975 0
+" 	winpos 975 0
 endfunction
+"位置も変える
 function! g:WindowMax()
 	set columns=271
 	set lines=81
 	winpos 0 24
 endfunction
-function! g:WindowLong()
+function! g:WindowRightLong()
 	set columns=130
 	set lines=999
+	winpos 975 0
+endfunction
+function! g:WindowLeftLong()
+	set columns=130
+	set lines=999
+	winpos 0 0
+endfunction
+function! g:WindowLong()
 	winpos 975 0
 endfunction
 

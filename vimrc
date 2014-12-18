@@ -73,20 +73,31 @@ scriptencoding utf-8
 "}}}
 
 " Check {{{1
-" プラグインの読み込み
-if !executable("git")
-    echo "Please install git." . " Reboot Vim."
-    finish
-endif
-
-let s:neobundle_plugins_dir =  '~/.vim/bundle'
 " 一度だけ読まれる設定
 if has('vim_starting')
+	if !executable("git")
+		echo "Please install git." . " Reboot Vim."
+		finish
+	endif
     " neobundle.vim がインストールするプラグインへのパス
     " neobundle.vim もこのディレクトリにインストールが行われる
     " neobundle.vim を runtimepath に加える
     "	execute "set runtimepath+=" . s:neobundle_plugins_dir . "/neobundle.vim"
 endif
+
+" $VIMFILES 内にvimrcを置く
+if has('unix')
+	let $VIMFILES=expand('~/.vim')
+elseif has('windows')
+	let $VIMFILES=expand('~/vimfiles')
+else
+	echo "not 'unix','windows' "
+" 	finish
+endif
+"
+let s:neobundle_plugins_dir =  '~/.vim/bundle'
+
+" プラグインの読み込み
 
 " NeoBundle が存在するか
 if (isdirectory(s:neobundle_plugins_dir . "/neobundle.vim") ) == 1
@@ -110,6 +121,9 @@ if (isdirectory(s:neobundle_plugins_dir . "/neobundle.vim") ) == 1
     augroup END
     finish
 endif
+" }}}
+
+" Kaoriya {{{1
 " }}}
 
 " Plugin {{{1

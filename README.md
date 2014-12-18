@@ -5,5 +5,5 @@ dot_files
 .vimrc
 
 # .vim/
-NeoBundle д╟┤╔═¤д╟днд╩дддтд╬
+NeoBundle уБзчобчРЖуБзуБНуБкуБДуВВуБо
 

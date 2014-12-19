@@ -500,9 +500,81 @@ NeoBundle 'h1mesuke/vim-alignta'
 " Align -r .=  " +=,= などが混ざってる場合
 "
 NeoBundle 'vim-jp/vital.vim'
+
 "
 "Vimの便利な画面分割＆タブページと、それを更に便利にする方法 LN_0x007
 NeoBundle 'kana/vim-submode'
+" あなたの Vim は もっと Smart に Input できる http://ac-mopp.blogspot.jp/2013/07/vim-smart-input.html
+NeoBundleLazy 'kana/vim-smartchr',  { 'autoload' : {'insert' : '1'} }
+NeoBundleLazy 'kana/vim-smartinput', { 'autoload' : {'insert' : '1'} }
+" Smartinput
+let s:bundle = neobundle#get('vim-smartinput')
+function! s:bundle.hooks.on_source(bundle)
+    call smartinput#clear_rules()
+endfunction
+" augroup cpp-smartinput
+"     autocmd!
+"     autocmd FileType cpp call  <SID>set_smartinput()
+" augroup END
+augroup cpp-smartinput
+    autocmd!
+    autocmd BufEnter * call smartinput#clear_rules()
+    autocmd BufEnter *.cpp,*.hpp,*.h call <SID>set_smartinput()
+"     autocmd BufEnter * call <SID>set_smartinput()
+"     autocmd FileType cpp call  <SID>set_smartinput()
+"   "autocmd! BufEnter *.c,*.cc,*.cxx,*.cpp,*.h,*.hh,*.java,*.py,*.sh,*.rb,*.html,*.css,*.js :Rooter
+augroup END
+
+function! s:set_smartinput()
+"     call smartinput#map_to_trigger('i', '%', '%', '%')
+"     call smartinput#define_rule({
+"                 \ 'at'    : '\%([^''"][\sA-Za-z]\*\|^\|%\)\%#',
+"                 \ 'char'  : '%',
+"                 \ 'input' : "<C-R>=smartchr#one_of(' % ', '%')<CR>",
+"                 \ })
+	let lst = [   ['<',     "smartchr#loop(' < ', ' << ', '<')" ],
+                \ ['>',     "smartchr#loop(' > ', ' >> ', ' >>> ', '>')"],
+                \ ['+',     "smartchr#loop(' + ', ' ++ ', '+')"],
+                \ ['-',     "smartchr#loop(' - ', ' -- ', '-')"],
+                \ ['/',     "smartchr#loop(' / ', '//', '/')"],
+                \ ['&',     "smartchr#loop(' & ', ' && ', '&')"],
+                \ ['%',     "smartchr#loop(' % ', '%')"],
+                \ ['*',     "smartchr#loop(' * ', '*')"],
+                \ ['<Bar>', "smartchr#loop(' | ', ' || ', '|')"],
+                \ [',',     "smartchr#loop(', ', ',')"]]
+
+    for i in lst
+        call smartinput#map_to_trigger('i', i[0], i[0], i[0])
+        call smartinput#define_rule({ 'char' : i[0], 'at' : '\%#',                                      'input' : '<C-R>=' . i[1] . '<CR>'})
+        call smartinput#define_rule({'char' : i[0], 'at' : '^\([^"]*"[^"]*"\)*[^"]*"[^"]*\%#',          'input' : i[0]})
+        call smartinput#define_rule({ 'char' : i[0], 'at' : '^\([^'']*''[^'']*''\)*[^'']*''[^'']*\%#',  'input' : i[0] })
+    endfor
+
+    call smartinput#define_rule({'char' : '>', 'at' : ' < \%#', 'input' : '<BS><BS><BS><><Left>'})
+
+    call smartinput#map_to_trigger('i', '=', '=', '=')
+    call smartinput#define_rule({ 'char' : '=', 'at' : '\%#',                                       'input' : "<C-R>=smartchr#loop(' = ', ' == ', '=')<CR>"})
+    call smartinput#define_rule({ 'char' : '=', 'at' : '[&+-/<>|] \%#',                             'input' : '<BS>= '})
+    call smartinput#define_rule({ 'char' : '=', 'at' : '!\%#',                                      'input' : '= '})
+    call smartinput#define_rule({ 'char' : '=', 'at' : '^\([^"]*"[^"]*"\)*[^"]*"[^"]*\%#',          'input' : '='})
+    call smartinput#define_rule({ 'char' : '=', 'at' : '^\([^'']*''[^'']*''\)*[^'']*''[^'']*\%#',   'input' : '='})
+
+    call smartinput#map_to_trigger('i', '<BS>', '<BS>', '<BS>')
+    call smartinput#define_rule({ 'char' : '<BS>' , 'at' : '(\s*)\%#'   , 'input' : '<C-O>dF(<BS>'})
+    call smartinput#define_rule({ 'char' : '<BS>' , 'at' : '{\s*}\%#'   , 'input' : '<C-O>dF{<BS>'})
+    call smartinput#define_rule({ 'char' : '<BS>' , 'at' : '<\s*>\%#'   , 'input' : '<C-O>dF<<BS>'})
+    call smartinput#define_rule({ 'char' : '<BS>' , 'at' : '\[\s*\]\%#' , 'input' : '<C-O>dF[<BS>'})
+
+    for op in ['<', '>', '+', '-', '/', '&', '%', '\*', '|']
+        call smartinput#define_rule({ 'char' : '<BS>' , 'at' : ' ' . op . ' \%#' , 'input' : '<BS><BS><BS>'})
+    endfor
+endfunction
+unlet s:bundle
+" Smartchr
+" let s:bundle = neobundle#get('vim-smartchr')
+" function! s:bundle.hooks.on_source(bundle)
+" endfunction
+" unlet s:bundle
 "
 "
 " 色設定 LN_0x009
@@ -655,6 +727,10 @@ NeoBundle 'vim-scripts/cursoroverdictionary'
 
 NeoBundle 'vim-jp/vim-sweep_trail'
 
+" <C-G>c
+NeoBundle 'tpope/vim-capslock'
+imap <C-a> <C-O><Plug>CapsLockToggle
+
 " プロジェクト管理
 " project.vim は手動インストール
 " NeoBundle 'vim-scripts/project.vim'
@@ -681,10 +757,31 @@ let g:eskk#cursor_color = {   'ascii': ['#8b8b83', '#bebebe'],
             \   'zenei': '#ffd700'}
 " <C-g>u  で元 にもどす?
 let g:eskk#set_undo_point = { 'sticky': 1,	'kakutei': 1 }
+" http://hinagishi.hateblo.jp/entry/2011/12/24/194319
+" http://subtech.g.hatena.ne.jp/motemen/20110527/1306485690
+" https://github.com/tyru/eskk.vim/issues/149
+"
+function! s:eskk_initial_pre()
+	" こちらが使われるみたい
+    let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+    call t.add_map(',', '，')
+    call t.add_map('.', '．')
+    call eskk#register_mode_table('hira', t)
+	"
+    let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+    call t.add_map(',', '，')
+    call t.add_map('.', '．')
+    call eskk#register_mode_table('kata', t)
+endfunction
+augroup vimrc-eskk
+    autocmd!
+    autocmd User eskk-initialize-pre call s:eskk_initial_pre()
+augroup END
 " MP_ESKK
 " http://hitode909.hatenablog.com/entry/20110421/1303274561
 " google-ime-skk
 " }
+
 " Makeを拡張 http://ac-mopp.blogspot.jp/2014/02/vimmakemake.html
 "  nargs を書き換え
 NeoBundle 'mopp/makecomp.vim'
@@ -848,6 +945,8 @@ nnoremap [prefix].. :<C-u>tabedit $MYVIMRC<CR>:lcd $VIMFILES<CR>
 "nnoremap [prefix].. :<C-u>tabedit $MYVIMRC<CR>
 " .gvimrc を開く
 nnoremap [prefix].g :<C-u>tabedit $MYGVIMRC<CR>
+let $MYVIMTIPS='~/Dropbox/work/memo/vim-tips'
+nnoremap [prefix].> :<C-u>tabedit $MYVIMTIPS<CR>
 " .vimrc / .gvimrc 用．保存して再読み込み
 nnoremap [prefix].r :<C-u>w<CR>:source %<CR>
 " .vimrc の読み込み LN_0x011
@@ -943,7 +1042,71 @@ inoremap <silent> <C-z> <C-g>u<C-a>
 " inoremap <silent> <Tab>   <C-g>u<C-t>
 inoremap <silent> <S-Tab> <C-g>u<C-d>
 
+" Sticky Shift if difficult to type key
+inoremap <expr> ;  <SID>sticky_func()
+cnoremap <expr> ;  <SID>sticky_func()
+snoremap <expr> ;  <SID>sticky_func()
 
+function! s:sticky_func()
+  let l:sticky_table = {
+    \ ',' : '<', '.' : '>', '/' : '?',
+    \ '1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
+    \ '6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
+    \ ';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
+    \ }
+  let l:special_table = {
+    \ "\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
+    \ }
+
+  let l:key = nr2char(getchar())
+  if l:key =~ '\l'
+    return toupper(l:key)
+  elseif has_key(l:sticky_table, l:key)
+    return l:sticky_table[l:key]
+  elseif has_key(l:special_table, l:key)
+    return l:special_table[l:key]
+  else
+    return 0
+  endif
+endfunction
+
+" http://deris.hatenablog.jp/entry/2013/10/19/165137
+" うまくいかない
+" capslock for US keyboard
+let s:capslock_key_set = {
+  \ '1': '!',
+  \ '2': '@',
+  \ '3': '#',
+  \ '4': '$',
+  \ '5': '%',
+  \ '6': '^',
+  \ '7': '&',
+  \ '8': '*',
+  \ '9': '(',
+  \ '0': ')',
+  \ '-': '_',
+  \ '=': '+',
+  \ '[': '{',
+  \ ']': '}',
+  \ ';': ':',
+  \ '''': '"',
+  \ ',': '<',
+  \ '.': '>',
+  \ '/': '?',
+  \ '`': '~',
+  \ ' ': ';',
+  \ }
+call submode#enter_with('capslock', 'cis', '', ';<Tab>', '<Nop>')
+call submode#leave_with('capslock', 'cis', '', '<Tab>')
+for s:char in range(char2nr('a'), char2nr('z'))
+  call submode#map('capslock', 'cis', '', nr2char(s:char), nr2char(s:char-32))
+endfor
+unlet s:char
+for [s:lhs, s:rhs] in items(s:capslock_key_set)
+  call submode#map('capslock', 'cis', '', s:lhs, s:rhs)
+endfor
+unlet s:lhs
+unlet s:rhs
 " }
 
 
@@ -2136,3 +2299,12 @@ command! -count -nargs=1 IndentFormat
 " i  <C-Z>       * <C-G>u<C-A>" i  <Plug>(neosnippet_start_unite_snippet) * unite#sources#neosnippet#start_complete()
 
 " cmd /c "mklink vimrc ..\Dropbox\work\dotfiles\vimrc"
+"
+" http://blomott.mobi/rubyneko/entry%2COSD4T-BYIbOsp26zrRwkZw%2C%2C%2C%2C.html#top
+" http://www.slideshare.net/sgurrr/nagoya-vim-1-about-plugins
+"
+" 2014-12-19 Scouter 711
+"
+" http://twilog.org/Linda_pp/month-1210
+" autocmd と NeoBundleLazy を使って vim-endwise の読み込みを FileType ruby,vim,sh,zsh,lua のときに限ってしまうのが良いかなぁと思います．
+" gnome-session-properties で google-ime-skk を登録

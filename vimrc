@@ -478,7 +478,7 @@ if has('unix')
 		NeoBundle 'fuenor/im_control.vim'
 endif
 "
-" unite.vim
+" unite.vim MP_UNITE
 NeoBundle "Shougo/unite.vim"
 " アウトラインの出力
 NeoBundle "Shougo/unite-outline"
@@ -490,6 +490,29 @@ NeoBundle "Shougo/neomru.vim"
 "
 NeoBundle "Shougo/vimshell.vim"
 " MP_VIMSHELL
+
+" http://www.vim.org/scripts/script.php?script_id=39
+" http://nanasi.jp/articles/vim/matchit_vim.html
+" NeoBundle "matchit"
+" http://tech.toshiya240.com/articles/2014/06/matchit-vim/
+source $VIMRUNTIME/macros/matchit.vim
+" let b:match_words="begin:end"
+" let b:match_words=\<fu\%[nction]\>:\<retu\%[rn]\>:\<endf\%[unction]\>,\<\(wh\%[ile]\|for\)\>:\<brea\%[k]\>:\<con\%[tinue]\>:\<end\(w\%[hile]\|fo\%[r]\)\>,\<if\>:\<el\%[seif]\>:\<en\%[dif]\>,\<try\>:\<cat\%[ch]\>:\<fina\%[lly]\>:\<endt\%[ry]\>,\<aug\%[roup]\s\+\%(END\>\)\@!\S:\<aug\%[roup]\s\+END\>,(:)
+augroup matchit
+  au!
+  au FileType tex let b:match_words = "begin:end"
+augroup END
+augroup matchit
+  au!
+  au FileType ruby let b:match_words = '\<\(module\|class\|def\|begin\|do\|if\|unless\|case\)\>:\<\(elsif\|when\|rescue\)\>:\<\(else\|ensure\)\>:\<end\>'
+augroup END
+
+" http://d.hatena.ne.jp/vimtaku/20121226/1356500063
+NeoBundle 'vimtaku/hl_matchit.vim.git'
+"" for hl_matchit
+let g:hl_matchit_enable_on_vim_startup = 1
+let g:hl_matchit_hl_groupname = 'Title'
+let g:hl_matchit_allow_ft = 'html,vim,sh,ruby'
 
 NeoBundle "Shougo/vimfiler.vim"
 let g:vimfiler_as_default_explorer = 1
@@ -578,6 +601,64 @@ NeoBundle 'kana/vim-submode'
 NeoBundle 'kana/vim-textobj-user'
 
 NeoBundle 'h1mesuke/textobj-wiw'
+
+" http://d.hatena.ne.jp/thinca/20140324/1395590910
+" NeoBundle
+" gfを拡張
+NeoBundle 'kana/vim-gf-user'
+" gf for git diff
+NeoBundle 'kana/vim-gf-diff.git'
+
+" " もうすこし
+" " tags:30
+" "foo.c:23"
+" " kana/vim-gf-diff.git
+" " ~/.vim/bundle/vim-gf-diff.git
+" ~/.vim/bundle/vim-gf-diff
+" vim-gf-diff
+" " a.\{-\}s "最短マッチ
+" " asasasas
+" function! GfFile()
+"   let path = expand('<cfile>')
+" 	if path =~# '.*\/.*'
+" 		if path =~# '\.git$'
+" 			let path = matchstr(path, '\/\zs.*\ze.git')
+" 		else
+" 			let path = matchstr(path, '\/\zs.*')
+" 		endif
+" 	endif
+" 	set path+=$BUNDLE
+" "   let path = findfile(path, getcwd() . ';')  " 追加
+"   if !filereadable(path)
+" 		echo path
+"     return 0
+"   endif
+" 	echo path
+"   return {
+"   \   'path': path,
+"   \   'line': line,
+"   \   'col': 0,
+"   \ }
+" endfunction
+
+function! GfFile()
+  let path = expand('<cfile>')
+  let line = 0
+  if path =~# ':\d\+:\?$'
+    let line = matchstr(path, '\d\+:\?$')
+    let path = matchstr(path, '.*\ze:\d\+:\?$')
+  endif
+  let path = findfile(path, getcwd() . ';')  " 追加
+  if !filereadable(path)
+    return 0
+  endif
+  return {
+  \   'path': path,
+  \   'line': line,
+  \   'col': 0,
+  \ }
+endfunction
+" call gf#user#extend('GfFile', 1000)
 
 " 色設定 LN_0x009
 " NeoBundle 'w0ng/vim-hybrid'
@@ -685,6 +766,14 @@ NeoBundle "VOoM"
 NeoBundle "rbtnn/vimconsole.vim"
 "
 NeoBundle "itchyny/calendar.vim"
+
+
+command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_
+							\ | diffthis | wincmd p | diffthis
+" http://kainokikaede.hatenablog.com/entry/2013/12/28/165213
+NeoBundle "chrisbra/Recover.vim"
+
+" let g:RecoverPlugin_Edit_Unmodified = 1
 
 " 移動
 " Vim-EasyMotionでカーソル移動を爆速にして生産性をもっと向上させる LN_0x00d
@@ -1355,7 +1444,7 @@ if ! empty(neobundle#get("calendar.vim"))
 endif
 " }
 
-" Unite関連 {
+" Unite関連 MP_UNITE {
 nnoremap [unite]    <Nop>
 nmap     [prefix]u [unite]
 "nnoremap <silent> [unite]c   :<C-u>UniteWithCurrentDir -buffer-name=files buffer file_mru bookmark file<CR>

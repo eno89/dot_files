@@ -545,7 +545,8 @@ NeoBundle "mattn/webapi-vim"
 " C++ 仕様書
 NeoBundle "rhysd/unite-n3337"
 " キャッシュ消したら，上手く動いた
-let g:unite_n3337_pdf = $HOME . "/.vim/pdf/n3337.pdf"
+" let g:unite_n3337_pdf = $HOME . "/.vim/pdf/n3337.pdf"
+let g:unite_n3337_pdf = $VIMFILES . "/pdf/n3337.pdf"
 " MP_N3337
 "
 NeoBundle "ujihisa/unite-locate"
@@ -664,7 +665,8 @@ NeoBundle 'tyru/eskk.vim'
 NeoBundle 'tyru/skkdict.vim'
 " ime を無効化
 "set imdisable
-let $ESKK_DIR = expand("$HOME/.vim/eskk/")
+" let $ESKK_DIR = expand("$HOME/.vim/eskk/")
+let $ESKK_DIR = expand("$VIMFILES/eskk/")
 let $ESKK_USER_DICT = $ESKK_DIR ."eskk_jisyo"
 let g:eskk#debug = 0
 " let g:eskk#egg_like_newline = 1
@@ -1531,7 +1533,9 @@ augroup END
 " }}}
 
 " Test {{{
-set runtimepath+=~/.vim/account_diary.vim
+" set runtimepath+=~/.vim/account_diary.vim
+execute "set runtimepath+=" . $VIMFILES . "/account_diary.vim"
+" set runtimepath += $VIMFILES . '/account_diary.vim'
 
 let s:unite_source = { 'name': 'mylines'}
 function! s:unite_source.gather_candidates(args, context)

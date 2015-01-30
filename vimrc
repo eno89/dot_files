@@ -470,6 +470,15 @@ if has('unix')
 		NeoBundle 'vim-jp/vimdoc-ja'
 		"
 		NeoBundle "Shougo/vimproc"
+		NeoBundle 'Shougo/vimproc.vim', {
+		\ 'build' : {
+		\     'windows' : 'tools\\update-dll-mingw',
+		\     'cygwin' : 'make -f make_cygwin.mak',
+		\     'mac' : 'make -f make_mac.mak',
+		\     'linux' : 'make',
+		\     'unix' : 'gmake',
+		\    },
+		\ }
 		" 汎用的なコード補完プラグイン
 		NeoBundle "Shougo/neocomplete.vim"
 
@@ -723,6 +732,7 @@ NeoBundle "osyo-manga/unite-quickfix"
 NeoBundle "tsukkee/unite-tag"
 NeoBundle "tsukkee/unite-help"
 NeoBundle "mattn/unite-mcdonalds-vim"
+NeoBundle "mattn/unite-rhythmbox"
 " http://www.karakaram.com/ref-webdict
 NeoBundle "thinca/vim-ref"
 "webdictサイトの設定
@@ -854,10 +864,10 @@ NeoBundle 'vim-jp/vim-sweep_trail'
 " <C-G>c
 NeoBundle 'tpope/vim-capslock'
 imap <C-q> <C-O><Plug>CapsLockToggle
-
 " プロジェクト管理
 " project.vim は手動インストール
 " NeoBundle 'vim-scripts/project.vim'
+"
 
 " 入力 ESKK LN_0x010 {
 NeoBundle 'tyru/eskk.vim'
@@ -1070,7 +1080,7 @@ nnoremap [prefix].pd <Esc>a<C-r>=strftime("%Y-%m-%d")<CR>
 "http://homepage3.nifty.com/keuch/cat_vim.html
 command! PutDateTime r!date +\%Y-\%m-\%d\ \%H:\%M
 command! PutDate r!date +\%Y-\%m-\%d
-"}}}
+
 command! Utf8  e ++enc=utf-8
 command! Euc   e ++enc=euc-jp
 command! Sjis  e ++enc=cp932
@@ -1079,6 +1089,73 @@ command! WUtf8 w ++enc=utf-8 | e
 command! WEuc  w ++enc=euc-jp | e
 command! WSjis w ++enc=cp932 | e
 command! WJis  w ++enc=iso-2022-jp | e
+
+
+" うまくできない
+command! Tabe1  :normal ma | :tabe % | :normal 'a
+command! Tabe2  call s:tabe2()
+command! Tabe3  call Tabe3()
+function! Tabe3()
+	ma
+	:tabe %
+	'a
+endfunction
+function! s:tabe2()
+	ma
+	:tabe	 %
+	'a
+endfunction
+command! Tabe4  ma:tabe %<CR>'a
+
+" quickfix
+" http://d.hatena.ne.jp/thinca/20130708/1373210009
+" http://d.hatena.ne.jp/ryochack/20110609/1307639604
+
+" $VIMFILES/after/ftplugin/qf.vim に書く
+" noremap <buffer> p  <CR>zz<C-w>p
+"
+" setlocal statusline+=\ %L
+"
+" nnoremap <silent> <buffer> dd :call <SID>del_entry()<CR>
+" nnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
+" vnoremap <silent> <buffer> d :call <SID>del_entry()<CR>
+" vnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
+" nnoremap <silent> <buffer> u :<C-u>call <SID>undo_entry()<CR>
+"
+" if exists('*s:undo_entry')
+"   finish
+" endif
+"
+" function! s:undo_entry()
+"   let history = get(w:, 'qf_history', [])
+"   if !empty(history)
+"     call setqflist(remove(history, -1), 'r')
+"   endif
+" endfunction
+"
+" function! s:del_entry() range
+"   let qf = getqflist()
+"   let history = get(w:, 'qf_history', [])
+"   call add(history, copy(qf))
+"   let w:qf_history = history
+"   unlet! qf[a:firstline - 1 : a:lastline - 1]
+"   call setqflist(qf, 'r')
+"   execute a:firstline
+" endfunction
+
+function! OpenModifiableQF()
+        cw
+        set modifiable
+        set nowrap
+endfunction
+
+augroup quick_fix_1
+	autocmd!
+	autocmd QuickfixCmdPost vimgrep call OpenModifiableQF()
+augroup END
+
+
+"}}}
 
 " Mapping {{{1
 " ショートカッ卜の設定
@@ -1183,13 +1260,13 @@ cnoremap <M-B> <S-Left>
 
 "カーソル一文字単位移動
 " inoremap <silent> <C-S> <Left>
-inoremap <silent> <C-D> <Right>
+" inoremap <silent> <C-D> <Right>
 "単語単位移動（行末で止まる必要がない場合）
-inoremap <silent> <C-F> <S-Right>
-inoremap <silent> <C-B> <S-Left>
+" inoremap <silent> <C-F> <S-Right>
+" inoremap <silent> <C-B> <S-Left>
 "行頭 行末
-inoremap <silent> <C-A> <Home>
-inoremap <silent> <C-E> <End>
+" inoremap <silent> <C-A> <Home>
+" inoremap <silent> <C-E> <End>
 "カーソル前の文字削除
 inoremap <silent> <BS>  <C-g>u<BS>
 inoremap <silent> <C-h> <C-g>u<C-h>
@@ -1925,6 +2002,9 @@ augroup END
 " }}}
 
 " Test {{{
+" http://perl-users.jp/articles/advent-calendar/2010/casual/5
+" set runtimepath+=~/.vim/my-unite-rhythmbox
+
 set runtimepath+=~/.vim/account_diary.vim
 
 let s:unite_source = { 'name': 'mylines'}

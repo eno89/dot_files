@@ -144,6 +144,11 @@ endfunction
 function! g:WindowLong()
 	winpos 975 0
 endfunction
+function! g:WindowSubDisplayMax()
+	winpos 1920 24
+	set columns=177
+	set lines=999
+endfunction
 
 "-------------------------------------------------------------------------------
 ""ステータス行を表示
@@ -163,5 +168,6 @@ endfunction
 
 
 " -------------------------------------------------------
-"set guifont=Ricty\ 15
+" set guifont=Ricty\ 10
+" set guifont=Ricty\ 10
 "set transparency=220

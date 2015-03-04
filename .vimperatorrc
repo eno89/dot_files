@@ -1,39 +1,39 @@
-"3.8.3 (created: 2014/11/09 13:19:01)
-
-source! /home/n-inoue/.vimperatorrc.local
-
 " vim: set ft=vimperator:
+"3.9 (created: 2015/02/15 15:49:05)
+
+" source! /home/n-inoue/.vimperatorrc.local
+" source! /$HOME/.vimperatorrc.local
 " http://qiita.com/petitviolet/items/45973a3bd4878b01a390#%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E7%A7%BB%E5%8B%95
-"
-" ~/.vimperatorrc
-"
-" " スクロールの端などの際に出るbeepをoff
-" set nobeep
-"
-" " デフォルトの検索エンジン
-" set defsearch=google
-"
-" " 検索キーワードのハイライト
-" set hlsearch
-"
-" " j/k でのスクロール幅を 1行 から 3行 に変更
-" " map j 3jとかすると無限ループして死ぬ
-" map j 3<C-e>
-" map k 3<C-y>
-"
-" " ddでタブを閉じる, dでは何もしない
-" no dd :tabclose<CR>
-" map d <NOP>
-"
-" " h/lに戻る/進むを割り当て
-" map H <A-Left>
-" map L <A-Right>
-"
-" " H/Lでタブ移動
-" map h gT
-" map l gt
+
+set defsearch=google
+set hlsearch
+set hintchars=hjklasdfgyuiopqwertnmzxcvb
+
+
+" j/k でのスクロール幅を 1行 から 3行 に変更
+noremap j 3j
+noremap k 3k
+
+" ddでタブを閉じる, dでは何もしない
+noremap dd :tabclose<CR>
+noremap d <NOP>
+
 " " Shift + ←/→ で現在のタブの位置変更
-" map <S-Right> :tabmove! +1<CR>
-" map <S-Left> :tabmove! -1<CR>
+" nnoremap <S-Right> :tabmove! +1<CR>
+" nnoremap <S-Left> :tabmove! -1<CR>
 
+" -------------------
+" vnoremap [prefix] <Nop>
+" vmap     <Space> [prefix]
+" nnoremap [prefix] <Nop>
+" nmap     <Space> [prefix]
+noremap <Space> <Nop>
+noremap ; :
+noremap : ;
+noremap <Space>.r :source<Space>$MY_VIMPERATORRC<CR>
+noremap <Space>./ :nohlsearch<CR>
+noremap v cv
+noremap V cv0$
 
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>

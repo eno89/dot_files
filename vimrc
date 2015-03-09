@@ -93,6 +93,7 @@ else
 endif
 "
 let $BUNDLE = $VIMFILES . '/bundle'
+let $MY_VIMPERATORRC = $HOME . '/.vimperatorrc'
 let s:neobundle_plugins_dir = $VIMFILES . '/bundle'
 
 let s:my_script_test_dir = $VIMFILES . '/test_script'
@@ -769,7 +770,7 @@ NeoBundleLazy "thinca/vim-quickrun", { "autoload": {
 " nmap <C-R> <Plug>(quickrun)
 let s:hooks = neobundle#get_hooks("vim-quickrun")
 function! s:hooks.on_source(bundle)
-	let g:quickrun_config = { "*":{"runner": "remote/vimproc"}, }
+	let g:quickrun_config = { "_":{"runner": "remote/vimproc", 'split': ''},}
 endfunction
 
 " NeoBundleLazy "lambdalisue/shareboard.vim", {
@@ -1056,7 +1057,28 @@ endif
 " 場所に注意 "NeoBundle 内で定義しない
 let s:V = vital#of('vital')
 
-" 自作関数 {
+command! -nargs=1 -complete=custom,s:str_rc RC call <SID>edit_rc(<f-args>)
+function! s:str_rc(ArgLead, CmdLine, CursorPos)
+	return "vimrc\ngvimrc\nvimperatorrc"
+endfunction
+" command! -nargs=1 -complete=customlist,s:list_rc RC call <SID>edit_rc(<f-args>)
+" function! s:list_rc(ArgLead, CmdLine, CursorPos)
+" 	let l = ['vimrc', 'gvimrc', 'vimperatorrc']
+" 	return l
+" endfunction
+function! s:edit_rc(rc)
+	if a:rc == 'vimrc'
+		exe 'e' . expand('$MYVIMRC')
+	endif
+	if a:rc == 'gvimrc'
+		exe 'e' . expand('$MYGVIMRC')
+	endif
+	if a:rc == 'vimperatorrc'
+		exe 'e' . expand('$MY_VIMPERATORRC')
+	endif
+endfunction
+
+
 " 構文チェック用
 function! s:Gcc()
 		:w
@@ -1076,7 +1098,6 @@ function! s:EditNoteDate()
 		"     edit "note." . l:date . ".txt"
 endfunction
 command! EditNote2 call <SID>EditNoteDate()
-"}
 "
 " 縦に連番を入力する
 " https://sites.google.com/site/fudist/Home/vim-nihongo-ban/tips#TOC-12
@@ -1121,22 +1142,15 @@ command! WEuc  w ++enc=euc-jp | e
 command! WSjis w ++enc=cp932 | e
 command! WJis  w ++enc=iso-2022-jp | e
 
-
-" うまくできない
-command! Tabe1  :normal ma | :tabe % | :normal 'a
-command! Tabe2  call s:tabe2()
-command! Tabe3  call Tabe3()
-function! Tabe3()
-	ma
-	:tabe %
-	'a
-endfunction
-function! s:tabe2()
-	ma
-	:tabe	 %
-	'a
-endfunction
-command! Tabe4  ma:tabe %<CR>'a
+"
+command! Tabe1  exe 'norm ma' | tabe % | exe "norm 'a" | exe 'norm zz'
+command! Tabe  call s:tabe()
+fu! s:tabe()
+	norm ma
+	tabe %
+	norm 'a
+	norm zz
+endfu
 
 " quickfix
 " http://d.hatena.ne.jp/thinca/20130708/1373210009
@@ -1185,6 +1199,17 @@ augroup quick-fix-1
 	autocmd QuickfixCmdPost vimgrep call OpenModifiableQF()
 augroup END
 
+" bundle フォルダを開く
+com! OBD call OpenBundlepluginDir()
+fu! OpenBundlepluginDir()
+	let l = getline(".")
+	if l =~ 'NeoBundle'
+			let dir = matchstr(l, '\/.\{-}\ze\"')
+			let path = $BUNDLE . dir
+			echo path
+			exe "e " . path
+	endif
+endfu
 
 "}}}
 
@@ -1211,6 +1236,7 @@ nnoremap [prefix].r :<C-u>w<CR>:source %<CR>
 nmap [prefix].R <Plug>(quickrun)
 " .vimrc の読み込み LN_0x011
 command! ReloadVimrc  source $MYVIMRC
+
 " Shift を押す代わりに
 nnoremap [prefix];  :<C-u>
 " -en-jp 日本語キーボード と違うもの
@@ -1248,8 +1274,6 @@ nnoremap [prefix].h :<C-u>help<Space>
 nnoremap [prefix]./ :nohlsearch<CR>
 " 終了
 " nnoremap [prefix].q :<C-u>q!<CR>
-" オムニ補完を割り当てる
-inoremap <C-S> <C-X><C-O><C-P>
 " 0レジスタを簡易クリップボードにする
 " 選択範囲を削除，なんか操作して，貼り付け．みたいな動作
 " 削除したさいに 0レジスタに入れるようにする
@@ -1308,6 +1332,10 @@ cnoremap <C-b> <Left>
 cnoremap <C-f> <Right>
 cnoremap <M-b> <S-Left>
 
+" inoremap <C-3> <Esc>
+
+" オムニ補完を割り当てる
+inoremap <C-S> <C-X><C-O><C-P>
 "カーソル一文字単位移動
 " inoremap <silent> <C-s> <Left>
 " inoremap <silent> <C-d> <Right>
@@ -1321,11 +1349,11 @@ cnoremap <M-b> <S-Left>
 " http://yosugi.hatenablog.jp/entry/2013/06/29/091345
 
 "カーソル前の文字削除
-inoremap <silent> <BS>  <C-g>u<BS>
-inoremap <silent> <C-h> <C-g>u<C-h>
+" inoremap <silent> <BS>  <C-g>u<BS>
+" inoremap <silent> <C-h> <C-g>u<C-h>
 "カーソル後の文字削除
-inoremap <silent> <Del> <C-g>u<Del>
-inoremap <silent> <C-g> <C-g>u<Del>
+" inoremap <silent> <Del> <C-g>u<Del>
+" inoremap <silent> <C-g> <C-g>u<Del>
 "最後に挿入した文字列を挿入
 inoremap <silent> <C-z> <C-g>u<C-a>
 "現在行をインデント

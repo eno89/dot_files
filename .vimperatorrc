@@ -30,10 +30,16 @@ noremap d <NOP>
 noremap <Space> <Nop>
 noremap ; :
 noremap : ;
-noremap <Space>.r :source<Space>$MY_VIMPERATORRC<CR>
-noremap <Space>./ :nohlsearch<CR>
+noremap `r :source<Space>$MY_VIMPERATORRC<CR>
+noremap `/ :nohlsearch<CR>
+noremap , ;
 noremap v cv
 noremap V cv0$
 
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+
+inoremap <C-p> <Up>
+inoremap <C-n> <Down>
+inoremap <C-b> <Left>
+inoremap <C-f> <Down>

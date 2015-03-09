@@ -99,20 +99,21 @@ if filereadable(g:save_window_file)
 endif
 
 " ウィンドウの位置を変える
-command! MoveWindow -nargs=+ call <SID>MoveWindow(<f-args>)
-command! MoveLeft            call <SID>MoveWindow(0,0)
-command! MoveRight           call <SID>MoveWindow(975,0)
-function! s:MoveWindow(x, y)
+command! -nargs=+ MoveWindow call <SID>MoveWindow(<f-args>)
+command!          MoveLeft   call <SID>MoveWindow(0,0)
+command!          MoveRight  call <SID>MoveWindow(975,0)
+function! g:MoveWindow(x, y)
 	winpos a:x a:y
 endfunction
-function! s:RectWindow(x, y, w, h)
+function! g:RectWindow(x, y, w, h)
 	winpos a:x a:y
 	set columns=a:w
 	set lines=a:h
 endfunction
 "
-command! SizeWindow -nargs=+ call <SID>size_window(<f-args>)
-command! SizeMini            call <SID>size_window(35,130)
+command! -nargs=+ SizeWindow call <SID>size_window(<f-args>)
+command! -nargs=+ SW         call <SID>size_window(<f-args>)
+command! 					SizeMini   call <SID>size_window(35,130)
 function! s:size_window(...)
 	let &lines = a:1
 	if a:0 == 2

@@ -1,4 +1,4 @@
- "vim700: set tw=110 ts=2 ft=vim noet fdc=1: " modeline
+"vim700: set tw=110 ts=2 ft=vim noet fdc=1: " modeline
 " vim: foldmethod=marker
 " 前置き "{{{1
 "-------------------------------------------------------------------------------
@@ -93,25 +93,29 @@ else
 endif
 "
 let $BUNDLE = $VIMFILES . '/bundle'
+let $MY_VIMPERATORRC = $HOME . '/.vimperatorrc'
 let s:neobundle_plugins_dir = $VIMFILES . '/bundle'
+
+let s:my_script_test_dir = $VIMFILES . '/test_script'
+let $MT = s:my_script_test_dir
 
 " プラグインの読み込み
 
 " NeoBundle が存在するか
-if ! isdirectory(s:neobundle_plugins_dir . "/neobundle.vim")
+if ! isdirectory(s:neobundle_plugins_dir . '/neobundle.vim')
 		echo "Please install neobundle.vim."
-		echo  s:neobundle_plugins_dir . "/neobundle.vim"
+		echo  s:neobundle_plugins_dir . '/neobundle.vim'
 		" NeoBundle のインストール
 		function! s:install_neobundle()
-				if input("Install neobundle.vim? [Y/N] : ") == "Y"
+				if input('Install neobundle.vim? [Y/N] : ') == 'Y'
 						if isdirectory(s:neobundle_plugins_dir) == 1
-								:all mkdir(s:neobundle_plugins_dir, "p")
+								:all mkdir(s:neobundle_plugins_dir, 'p')
 						endif
-						execute "!git clone git://github.com/Shougo/neobundle.vim "
-												\ . s:neobundle_plugins_dir . "/neobundle.vim"
-						echo "neobundle installed. Please restart vim."
+						execute '!git clone git://github.com/Shougo/neobundle.vim '
+												\ . s:neobundle_plugins_dir . '/neobundle.vim'
+						echo 'neobundle installed. Please restart vim.'
 				else
-						echo "Canceled."
+						echo 'Canceled.'
 				endif
 		endfunction
 		augroup install-neobundle
@@ -230,7 +234,7 @@ if (has('win32') || has('win32'))
 		" 以前にg:no_vimrc_exampleに非0な値を設定しておけばインクルードはしない。
 		let g:no_vimrc_example = 1
 		if 1 && (!exists('g:no_vimrc_example') || g:no_vimrc_example == 0)
-				if &guioptions !~# "M"
+				if &guioptions !~# 'M'
 						" vimrc_example.vimを読み込む時はguioptionsにMフラグをつけて、syntax on
 						" やfiletype plugin onが引き起こすmenu.vimの読み込みを避ける。こうしない
 						" とencに対応するメニューファイルが読み込まれてしまい、これの後で読み込
@@ -319,11 +323,11 @@ if (has('win32') || has('win32'))
 		" コンソールでのカラー表示のための設定(暫定的にUNIX専用)
 		if has('unix') && !has('gui_running')
 				let s:uname = system('uname')
-				if s:uname =~? "linux"
+				if s:uname =~? 'linux'
 						set term=builtin_linux
-				elseif s:uname =~? "freebsd"
+				elseif s:uname =~? 'freebsd'
 						set term=builtin_cons25
-				elseif s:uname =~? "Darwin"
+				elseif s:uname =~? 'Darwin'
 						set term=beos-ansi
 				else
 						set term=builtin_xterm
@@ -429,18 +433,17 @@ endif
 
 " Plugin {{{1
 " {
-execute "set runtimepath+=" . s:neobundle_plugins_dir . "/neobundle.vim"
+execute 'set runtimepath+=' . s:neobundle_plugins_dir . '/neobundle.vim'
 " NeoBundle の初期化
 call neobundle#begin(s:neobundle_plugins_dir)
 "neobundle.vim 自体を管理する
 NeoBundleFetch 'Shougo/neobundle.vim'
-"
-NeoBundleLazy "Shougo/neosnippet.vim", {
-						\ "depends": ["honza/vim-snippets"],
-						\ "autoload": {
-						\   "insert": 1,
+NeoBundleLazy 'Shougo/neosnippet.vim', {
+						\ 'depends': ['honza/vim-snippets'],
+						\ 'autoload': {
+						\   'insert': 1,
 						\ }}
-let s:hooks = neobundle#get_hooks("neosnippet.vim")
+let s:hooks = neobundle#get_hooks('neosnippet.vim')
 function! s:hooks.on_source(bundle)
 		" Plugin key-mappings.
 		imap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -510,9 +513,6 @@ source $VIMRUNTIME/macros/matchit.vim
 augroup matchit
   au!
   au FileType tex let b:match_words = "begin:end"
-augroup END
-augroup matchit
-  au!
   au FileType ruby let b:match_words = '\<\(module\|class\|def\|begin\|do\|if\|unless\|case\)\>:\<\(elsif\|when\|rescue\)\>:\<\(else\|ensure\)\>:\<end\>'
 augroup END
 
@@ -607,9 +607,16 @@ NeoBundle 'kana/vim-submode'
 " endfunction
 " unlet s:bundle
 
+" http://d.hatena.ne.jp/osyo-manga/20130717/1374069987
 NeoBundle 'kana/vim-textobj-user'
-
+" e
+NeoBundle 'kana/vim-textobj-entire'
+" l
+NeoBundle 'kana/vim-textobj-line'
+" ,w
 NeoBundle 'h1mesuke/textobj-wiw'
+" c
+NeoBundle 'mattn/vim-textobj-cell'
 
 " http://d.hatena.ne.jp/thinca/20140324/1395590910
 " NeoBundle
@@ -690,6 +697,7 @@ let g:indent_guides_guide_size = 1
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-speeddating'
 NeoBundle 'tpope/vim-markdown'
+NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'vim-jp/autofmt'
 
 " Yank LN_0x00a
@@ -702,7 +710,7 @@ NeoBundle 'thinca/vim-scouter'
 NeoBundle 'glidenote/memolist.vim'
 " MarkDown
 NeoBundleLazy 'kannokanno/previm' , { 'autoload' : { 'filetypes' : 'markdown' } }
-augroup PrevimSettings
+augroup previm-settings
 		autocmd!
 		autocmd BufNewFile,BufRead *.{md,mdwn,mkd,mkdn,mark*} set filetype=markdown
 augroup END
@@ -758,8 +766,33 @@ nmap <Leader>rj :<C-u>Ref webdict je<Space>
 nmap <Leader>re :<C-u>Ref webdict ej<Space>
 "webdictサイトの設定
 
-NeoBundle "thinca/vim-quickrun"
-" nnoremap <C-R> <Plug>(quickrun)
+NeoBundleLazy "thinca/vim-quickrun", { "autoload": {
+																\ "mappings": [['nxo','<Plug>(quickrun)']] }}
+" nmap <C-R> <Plug>(quickrun)
+let s:hooks = neobundle#get_hooks("vim-quickrun")
+function! s:hooks.on_source(bundle)
+	let g:quickrun_config = { "_":{"runner": "remote/vimproc", 'split': ''},}
+endfunction
+
+" NeoBundleLazy "lambdalisue/shareboard.vim", {
+"       \ "autoload": { "commands": ["ShareboardPreview", "ShareboardCompile"], },
+"       \ "build": {   "mac": "pip install shareboard",  "unix": "pip install shareboard", }}
+" function! s:shareboard_settings()
+"   nnoremap <buffer>[shareboard] <Nop>
+"   nmap <buffer><Leader> [shareboard]
+"   nnoremap <buffer><silent> [shareboard]v :ShareboardPreview<CR>
+"   nnoremap <buffer><silent> [shareboard]c :ShareboardCompile<CR>
+" endfunction
+" augroup MyAutoCmd
+" 	autocmd!
+" 	autocmd FileType rst,text,pandoc,markdown,textile call s:shareboard_settings()
+" augroup END
+" let s:hooks = neobundle#get_hooks("shareboard.vim")
+" function! s:hooks.on_source(bundle)
+"   " VimからPandocが見えないことが多々あるので念の為~/.cabal/binをPATHに追加
+"   let $PATH=expand("~/.cabal/bin:") . $PATH
+" endfunction
+
 " 翻訳
 " http://www.absolute-keitarou.net/blog/?p=1239
 NeoBundle "mattn/excitetranslate-vim"
@@ -767,23 +800,17 @@ NeoBundle "mattn/excitetranslate-vim"
 NeoBundle "daisuzu/translategoogle.vim"
 " コメント切り替え MP_CAW
 NeoBundle "tyru/caw.vim"
+NeoBundle "tyru/Capture.vim"
 " Doxygen 生成 DoxXXX
 NeoBundle "vim-scripts/DoxygenToolkit.vim"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 
-" 忘れた
-NeoBundle "VOoM"
-"
-NeoBundle "rbtnn/vimconsole.vim"
-"
-NeoBundle "itchyny/calendar.vim"
+" NeoBundle "VOoM"
+" NeoBundle "rbtnn/vimconsole.vim"
+" NeoBundle "itchyny/calendar.vim"
 
-
-command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_
-							\ | diffthis | wincmd p | diffthis
 " http://kainokikaede.hatenablog.com/entry/2013/12/28/165213
 NeoBundle "chrisbra/Recover.vim"
-
 " let g:RecoverPlugin_Edit_Unmodified = 1
 
 " 移動
@@ -844,12 +871,11 @@ let g:clang_library_path = '/usr/lib/llvm-3.4/lib'
 "   " Automatically change the directory
 "   "autocmd! BufEnter *.c,*.cc,*.cxx,*.cpp,*.h,*.hh,*.java,*.py,*.sh,*.rb,*.html,*.css,*.js :Rooter
 " endif
-" タグのリスト表示
+
+" タグのリスト表示 " MP_TAGBAR
 NeoBundleLazy "majutsushi/tagbar", { "autoload": { "commands": ["TagbarToggle"] }}
 if ! empty(neobundle#get("tagbar"))
-		" Width (default 40)
 		let g:tagbar_width = 20
-		" MP_TAGBAR
 endif
 
 "
@@ -935,16 +961,19 @@ let g:jedi#rename_command = ""
 " http://d.hatena.ne.jp/heavenshell/20130827/1377605777
 let g:jedi#documentation_command = "K"
 
+NeoBundle 'superbrothers/vim-vimperator'
+
 " うまくいかない
 " NeoBundle "Twinside/vim-codeoverview"
 
-NeoBundle "koron/minimap-vim"
+" NeoBundle "koron/minimap-vim"
 NeoBundle "basyura/twibill.vim"
 NeoBundle "basyura/TweetVim"
 let g:tweetvim_display_icon = 1
 let g:tweetvim_tweet_per_page = 50
 " MP_TWEET
 
+NeoBundle 'yuratomo/w3m.vim'
 " } ------------------------------------------------------------------------------------------------------------
 call neobundle#end()
 filetype plugin indent on
@@ -1030,7 +1059,28 @@ endif
 " 場所に注意 "NeoBundle 内で定義しない
 let s:V = vital#of('vital')
 
-" 自作関数 {
+command! -nargs=1 -complete=custom,s:str_rc RC call <SID>edit_rc(<f-args>)
+function! s:str_rc(ArgLead, CmdLine, CursorPos)
+	return "vimrc\ngvimrc\nvimperatorrc"
+endfunction
+" command! -nargs=1 -complete=customlist,s:list_rc RC call <SID>edit_rc(<f-args>)
+" function! s:list_rc(ArgLead, CmdLine, CursorPos)
+" 	let l = ['vimrc', 'gvimrc', 'vimperatorrc']
+" 	return l
+" endfunction
+function! s:edit_rc(rc)
+	if a:rc == 'vimrc'
+		exe 'e' . expand('$MYVIMRC')
+	endif
+	if a:rc == 'gvimrc'
+		exe 'e' . expand('$MYGVIMRC')
+	endif
+	if a:rc == 'vimperatorrc'
+		exe 'e' . expand('$MY_VIMPERATORRC')
+	endif
+endfunction
+
+
 " 構文チェック用
 function! s:Gcc()
 		:w
@@ -1050,12 +1100,11 @@ function! s:EditNoteDate()
 		"     edit "note." . l:date . ".txt"
 endfunction
 command! EditNote2 call <SID>EditNoteDate()
-"}
 "
 " 縦に連番を入力する
 " https://sites.google.com/site/fudist/Home/vim-nihongo-ban/tips#TOC-12
 nnoremap <silent> co :ContinuousNumber <C-a><CR>
-" vnoremap <silent> co :ContinuousNumber <C-a><CR>
+vnoremap <silent> co :ContinuousNumber <C-a><CR>
 command! -count -nargs=1 ContinuousNumber
 						\ let cl = col('.') | for nc in range(1, <count>?<count>-line('.'):1)|
 								\ exe 'normal! j'.nc.<q-args>|call cursor('.', cl)|endfor|unlet cl|unlet snf
@@ -1068,6 +1117,9 @@ func! s:func_copy_cmd_output(cmd)
 		silent execute a:cmd
 		redir END
 endfunc
+
+command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_
+							\ | diffthis | wincmd p | diffthis
 
 " Vimで現在日時を自動的に挿入する方法
 " http://d.hatena.ne.jp/hyuki/20130714/vim
@@ -1092,22 +1144,15 @@ command! WEuc  w ++enc=euc-jp | e
 command! WSjis w ++enc=cp932 | e
 command! WJis  w ++enc=iso-2022-jp | e
 
-
-" うまくできない
-command! Tabe1  :normal ma | :tabe % | :normal 'a
-command! Tabe2  call s:tabe2()
-command! Tabe3  call Tabe3()
-function! Tabe3()
-	ma
-	:tabe %
-	'a
-endfunction
-function! s:tabe2()
-	ma
-	:tabe	 %
-	'a
-endfunction
-command! Tabe4  ma:tabe %<CR>'a
+"
+command! Tabe1  exe 'norm ma' | tabe % | exe "norm 'a" | exe 'norm zz'
+command! Tabe  call s:tabe()
+fu! s:tabe()
+	norm ma
+	tabe %
+	norm 'a
+	norm zz
+endfu
 
 " quickfix
 " http://d.hatena.ne.jp/thinca/20130708/1373210009
@@ -1151,11 +1196,22 @@ function! OpenModifiableQF()
         set nowrap
 endfunction
 
-augroup quick_fix_1
+augroup quick-fix-1
 	autocmd!
 	autocmd QuickfixCmdPost vimgrep call OpenModifiableQF()
 augroup END
 
+" bundle フォルダを開く
+com! OBD call OpenBundlepluginDir()
+fu! OpenBundlepluginDir()
+	let l = getline(".")
+	if l =~ 'NeoBundle'
+			let dir = matchstr(l, '\/.\{-}\ze\"')
+			let path = $BUNDLE . dir
+			echo path
+			exe "e " . path
+	endif
+endfu
 
 "}}}
 
@@ -1177,15 +1233,30 @@ nnoremap [prefix].g :<C-u>tabedit $MYGVIMRC<CR>
 let $MYVIMTIPS='~/Dropbox/work/memo/vim-tips'
 nnoremap [prefix].> :<C-u>tabedit $MYVIMTIPS<CR>
 " .vimrc / .gvimrc 用．保存して再読み込み
+nnoremap [prefix]r :<C-u>w<CR>:e %<CR>
 nnoremap [prefix].r :<C-u>w<CR>:source %<CR>
+nmap [prefix].R <Plug>(quickrun)
 " .vimrc の読み込み LN_0x011
 command! ReloadVimrc  source $MYVIMRC
+
 " Shift を押す代わりに
 nnoremap [prefix];  :<C-u>
 " -en-jp 日本語キーボード と違うもの
 " 2-@-" 6-^-& 8-*-( 9-(-) 0-)-
 "打ちづらいキーの割り当て
-nnoremap  [prefix]h ^
+function! s:rotate_head()
+    let c = col('.')
+    normal! ^
+    execute (c == col('.')) ? "normal! 0"  : ""
+endfunction
+" nnoremap  [prefix]h ^
+" nnoremap <expr> [prefix]h (virtcol('.') == 1) ? '^' : '0'
+" nnoremap <expr> [prefix]h (search('^\s\s*\%#', 'bcn')) ? '^' : '0'
+nnoremap <silent> [prefix]h :call <SID>rotate_head()<CR>
+nnoremap <expr> 0
+            \ match(strpart(getline('.'), 0, col('.') - 1), '^\s\+$') >= 0 ? '0' : '^'
+
+
 nnoremap  [prefix]l $
 nnoremap  [prefix]n *
 nnoremap <silent> [prefix]N *#
@@ -1205,14 +1276,13 @@ nnoremap [prefix].h :<C-u>help<Space>
 nnoremap [prefix]./ :nohlsearch<CR>
 " 終了
 " nnoremap [prefix].q :<C-u>q!<CR>
-" オムニ補完を割り当てる
-inoremap <C-S> <C-X><C-O><C-P>
 " 0レジスタを簡易クリップボードにする
 " 選択範囲を削除，なんか操作して，貼り付け．みたいな動作
 " 削除したさいに 0レジスタに入れるようにする
 vnoremap  [prefix]d ygvd
 " 0レジスタからの貼付け
 nnoremap   [prefix]p "0p
+nnoremap   [prefix]P "0P
 " 全体をフィルタ
 " nnoremap [prefix]= gg<C-v>G=<C-o><C-o>
 " noremap [prefix]= gg<C-v>G=<C-o><C-o>
@@ -1231,18 +1301,22 @@ nnoremap [prefix]qw :<C-U>cc<CR>
 nnoremap [prefix]ql :<C-U>cc<CR>
 nnoremap [prefix]qL :<C-U>ll<CR>
 
-" 各種設定をトグル
+" 各種設定をトグル "
 nnoremap [toggle] <Nop>
 nmap [prefix]t [toggle]
-nnoremap <silent> [toggle]s :setl spell!<CR>:setl spell?<CR>
-nnoremap <silent> [toggle]l :setl list!<CR>:setl list?<CR>
-nnoremap <silent> [toggle]t :setl expandtab!<CR>:setl expandtab?<CR>
-nnoremap <silent> [toggle]w :setl wrap!<CR>:setl wrap?<CR><S-Del>
-nnoremap <silent> [toggle]r :setl relativenumber!<CR>:setl relativenumber?<CR><S-Del>
+nnoremap [toggle]s :setl spell!<CR>:setl spell?<CR>
+nnoremap [toggle]l :setl list!<CR>:setl list?<CR>
+nnoremap [toggle]t :setl expandtab!<CR>:setl expandtab?<CR>
+nnoremap [toggle]w :setl wrap!<CR>:setl wrap?<CR><S-Del>
+nnoremap [toggle]r :setl relativenumber!<CR>:setl relativenumber?<CR><S-Del>
+nnoremap [toggle]s :setl scrollbind!<CR>:setl scrollbind?<CR>
+
 " トグルにしたい
-nnoremap <silent> [toggle]v :setl virtualedit=all<CR>
-nnoremap <silent> [toggle]b :setl virtualedit=block<CR>
-nnoremap <silent> [toggle]d :diffthis<CR>
+" nnoremap <silent> [toggle]v :setl virtualedit=all<CR>
+" nnoremap <silent> [toggle]b :setl virtualedit=block<CR>
+nnoremap <expr> [toggle]v (&l:virtualedit == "block") ? ':setl virtualedit=all<CR>' : ":setl virtualedit=block<CR>"
+" nnoremap <silent> [toggle]d :setl diff!<CR>:setl diff?<CR>
+nnoremap <expr> [toggle]d (&l:diff == 0) ? ":diffthis<CR>" : ":diffoff<CR>""
 
 
 " 全選択
@@ -1252,68 +1326,82 @@ nnoremap <silent> g<C-A> ggVG
 "
 " emacs 風キーバインド
 " https://sites.google.com/site/fudist/Home/vim-nihongo-ban/tips/vim-key-emacs
-cnoremap <C-A> <Home>
-cnoremap <C-E> <End>
-cnoremap <C-P> <Up>
-cnoremap <C-N> <Down>
-cnoremap <C-B> <Left>
-cnoremap <C-F> <Right>
-cnoremap <M-B> <S-Left>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <M-b> <S-Left>
 
+" inoremap <C-3> <Esc>
+
+" オムニ補完を割り当てる
+inoremap <C-S> <C-X><C-O><C-P>
 "カーソル一文字単位移動
-" inoremap <silent> <C-S> <Left>
-" inoremap <silent> <C-D> <Right>
+" inoremap <silent> <C-s> <Left>
+" inoremap <silent> <C-d> <Right>
 "単語単位移動（行末で止まる必要がない場合）
-" inoremap <silent> <C-F> <S-Right>
-" inoremap <silent> <C-B> <S-Left>
+" inoremap <silent> <C-f> <S-Right>
+" inoremap <silent> <C-b> <S-Left>
 "行頭 行末
-" inoremap <silent> <C-A> <Home>
-" inoremap <silent> <C-E> <End>
+" inoremap <silent> <C-a> <Home>
+" inoremap <expr> <C-a> search('^\s\s*\%#', 'bcn') ? "\<C-o>0" : "\<C-o>^"
+" inoremap <silent> <C-e> <End>
+" http://yosugi.hatenablog.jp/entry/2013/06/29/091345
+
 "カーソル前の文字削除
-inoremap <silent> <BS>  <C-g>u<BS>
-inoremap <silent> <C-h> <C-g>u<C-h>
+" inoremap <silent> <BS>  <C-g>u<BS>
+" inoremap <silent> <C-h> <C-g>u<C-h>
 "カーソル後の文字削除
-inoremap <silent> <Del> <C-g>u<Del>
-inoremap <silent> <C-g> <C-g>u<Del>
+" inoremap <silent> <Del> <C-g>u<Del>
+" inoremap <silent> <C-g> <C-g>u<Del>
 "最後に挿入した文字列を挿入
 inoremap <silent> <C-z> <C-g>u<C-a>
 "現在行をインデント
 " inoremap <silent> <Tab>   <C-g>u<C-t>
 inoremap <silent> <S-Tab> <C-g>u<C-d>
 
-" Sticky shift in English keyboard.
-inoremap <expr> ;  <SID>sticky_func()
-cnoremap <expr> ;  <SID>sticky_func()
-snoremap <expr> ;  <SID>sticky_func()
-" だめ
-" inoremap <C-;>  ;
+function! s:set_sticky()
+	" Sticky shift in English keyboard.
+	inoremap <expr> ;  <SID>sticky_func()
+	cnoremap <expr> ;  <SID>sticky_func()
+	snoremap <expr> ;  <SID>sticky_func()
+	" だめ
+	" inoremap <C-;>  ;
 
-function! s:sticky_func()
-		let l:sticky_table = {
-								\ ',' : '<', '.' : '>', '/' : '?',
-								\ '1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
-								\ '6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
-								\ ';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
-								\ }
-		let l:special_table = {
-								\ "\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
-								\ }
-		if mode() !~# '^c'
-        echo 'Input sticky key: '
-    endif
-		let l:key = nr2char(getchar())
-		if l:key =~ '\l'
-				return toupper(l:key)
-		elseif has_key(l:sticky_table, l:key)
-				return l:sticky_table[l:key]
-		elseif has_key(l:special_table, l:key)
-				return l:special_table[l:key]
-		else
-				return ';'
-		endif
+	function! s:sticky_func()
+			let l:sticky_table = {
+									\ ',' : '<', '.' : '>', '/' : '?',
+									\ '1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
+									\ '6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
+									\ ';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
+									\ }
+			let l:special_table = {
+									\ "\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
+									\ }
+			if mode() !~# '^c'
+					echo 'Input sticky key: '
+			endif
+			let l:key = nr2char(getchar())
+			if l:key =~ '\l'
+					return toupper(l:key)
+			elseif has_key(l:sticky_table, l:key)
+					return l:sticky_table[l:key]
+			elseif has_key(l:special_table, l:key)
+					return l:special_table[l:key]
+			else
+					return ';'
+			endif
+	endfunction
+endfunction
+function! s:unset_sticky()
+	iunmap S
 endfunction
 
-
+call s:set_sticky()
+command! S call s:set_sticky()
+command! US call s:unset_sticky()
 
 " http://deris.hatenablog.jp/entry/2013/10/19/165137
 " うまくいかない
@@ -1374,8 +1462,8 @@ nnoremap g# g#zz
 " nnoremap /  /\v
 nnoremap /  /
 
-" http://webtech-walker.com/archive/2009/01/18022957.html " これはだめ
-" vnoremap * "zy:let @/ - @z<CR>n
+" http://webtech-walker.com/archive/2009/01/18022957.html
+" vnoremap * "zy:let @/ = @z<CR>n
 vnoremap * "zy:/<C-r>"<CR>n
 
 " http://vim-jp.org/vim-users-jp/2009/08/31/Hack-65.html
@@ -1806,7 +1894,7 @@ endif
 "上手く行かない ??
 " autocmd ColorScheme * highlight! CusorLine ctermfg=22 guifg=#0088ff
 "colorscheme hybrid
-augroup status_line
+augroup status-line
   autocmd!
   au InsertEnter * hi StatusLine guifg=blue guibg=DarkYellow  gui=none ctermfg=Blue ctermbg=Yellow cterm=none
   au InsertLeave * hi StatusLine guifg=DarkBlue guibg=DarkGray   gui=none ctermfg=Blue ctermbg=DarkGrey cterm=none
@@ -1891,7 +1979,7 @@ set novb
 " set visualbell t_vb=
 " set noerrorbells
 
-augroup persistence_undo
+augroup persistence-undo
   autocmd!
 	au BufWritePre /tmp/* setlocal noundofile
 augroup END
@@ -1999,7 +2087,7 @@ augroup END
 " 自動的にquickfix-windowを開く LN_0x013
 augroup quick_fix
 		autocmd!
-		autocmd QuickFixCmdPost *grep* cwindow
+" 		autocmd QuickFixCmdPost *grep* cwindow
 augroup END
 " }}}
 

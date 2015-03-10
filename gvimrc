@@ -26,34 +26,34 @@ map! <S-Insert> <MiddleMouse>
 " Only do this for Vim version 5.0 and later.
 if version >= 500
 
-  " I like highlighting strings inside C comments
-"  let c_comment_strings=1
+	" I like highlighting strings inside C comments
+	"  let c_comment_strings=1
 
-  " Switch on syntax highlighting if it wasn't on yet.
-""  if !exists("syntax_on")
-""    syntax on
-""  endif
+	" Switch on syntax highlighting if it wasn't on yet.
+	""  if !exists("syntax_on")
+	""    syntax on
+	""  endif
 
-  " Switch on search pattern highlighting.
-"  set hlsearch
+	" Switch on search pattern highlighting.
+	"  set hlsearch
 
-  " For Win32 version, have "K" lookup the keyword in a help file
-  "if has("win32")
-  "  let winhelpfile='windows.hlp'
-  "  map K :execute "!start winhlp32 -k <cword> " . winhelpfile <CR>
-  "endif
+	" For Win32 version, have "K" lookup the keyword in a help file
+	"if has("win32")
+	"  let winhelpfile='windows.hlp'
+	"  map K :execute "!start winhlp32 -k <cword> " . winhelpfile <CR>
+	"endif
 
-  " Set nice colors
-  " background for normal text is light grey
-  " Text below the last line is darker grey
-  " Cursor is green, Cyan when ":lmap" mappings are active
-  " Constants are not underlined but have a slightly lighter background
-  " ighlight Normal guibg=grey90
-""  highlight Cursor guibg=Green guifg=NONE
-""  highlight lCursor guibg=Cyan guifg=NONE
-""  highlight NonText guibg=grey80
-""  highlight Constant gui=NONE guibg=grey95
-""  highlight Special gui=NONE guibg=grey95
+	" Set nice colors
+	" background for normal text is light grey
+	" Text below the last line is darker grey
+	" Cursor is green, Cyan when ":lmap" mappings are active
+	" Constants are not underlined but have a slightly lighter background
+	" ighlight Normal guibg=grey90
+	""  highlight Cursor guibg=Green guifg=NONE
+	""  highlight lCursor guibg=Cyan guifg=NONE
+	""  highlight NonText guibg=grey80
+	""  highlight Constant gui=NONE guibg=grey95
+	""  highlight Special gui=NONE guibg=grey95
 
 endif
 
@@ -80,7 +80,8 @@ endif
 
 "Hack #120: gVim でウィンドウの位置とサイズを記憶する
 "http://vim-jp.org/vim-users-jp/2010/01/28/Hack-120.html
-function! s:save_window()
+let g:save_window_file = expand('~/.vimwinpos')
+function! g:SaveWinPos()
 	let l:options = [
 				\ 'set columns=' . &columns,
 				\ 'set lines=' . &lines,
@@ -88,43 +89,43 @@ function! s:save_window()
 				\ ]
 	call writefile(l:options, g:save_window_file)
 endfunction
-
-let g:save_window_file = expand('~/.vimwinpos')
-augroup SaveWindow
+augroup save_win_pos
 	autocmd!
-	autocmd VimLeavePre * call s:save_window()
+	autocmd VimLeavePre * call g:SaveWinPos()
 augroup END
 
 if filereadable(g:save_window_file)
 	execute 'source' g:save_window_file
 endif
 
-" ウィンドウの大きさを変える
-" 失敗
-command! WindowMove call <SID>WindowMove(<q-args>)
-command! WindowMoveLeft call <SID>WindowMove(0,0)
-command! WindowMoveRight call <SID>WindowMove(975,0)
-" うまくいかない
-function! s:WindowMove(x, y)
+" ウィンドウの位置を変える
+command! -nargs=+ MoveWindow call <SID>MoveWindow(<f-args>)
+command!          MoveLeft   call <SID>MoveWindow(0,0)
+command!          MoveRight  call <SID>MoveWindow(975,0)
+function! g:MoveWindow(x, y)
 	winpos a:x a:y
 endfunction
-function! s:WindowMoveScale(x, y, w, h)
+function! g:RectWindow(x, y, w, h)
 	winpos a:x a:y
 	set columns=a:w
 	set lines=a:h
 endfunction
 "
-function! g:WindowMoveLeft()
-	winpos 0 0
+command! -nargs=+ SizeWindow call <SID>size_window(<f-args>)
+command! -nargs=+ SW         call <SID>size_window(<f-args>)
+command! 					SizeMini   call <SID>size_window(35,130)
+function! s:size_window(...)
+	let &lines = a:1
+	if a:0 == 2
+" 		set columns=b
+		let &columns = a:2
+	endif
 endfunction
-function! g:WindowMoveRight()
-	winpos 975 0
+function! g:SizeLong()
+	set lines=999
 endfunction
-function! g:WindowMini()
-	set columns=130
-	set lines=35
-" 	winpos 975 0
-endfunction
+
+" ウィンドウの大きさを変える
 "位置も変える
 function! g:WindowMax()
 	set columns=271
@@ -140,9 +141,6 @@ function! g:WindowLeftLong()
 	set columns=130
 	set lines=999
 	winpos 0 0
-endfunction
-function! g:WindowLong()
-	winpos 975 0
 endfunction
 function! g:WindowSubDisplayMax()
 	winpos 1920 24
